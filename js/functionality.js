@@ -4,12 +4,8 @@ const cardHeirarchy = ["two", "three", "four", "five", "six", "seven", "eight", 
 const suitArr = ["diamonds", "hearts", "clubs", "spades"];
 let bestHandIndex = 0;
 let resultList = [];
-
-
 let playerStatus = [0, 0];
 let compareCards = [0, 0];
-
-
 function evaluateHand(hand, iteration) {
     let cardsInvolved = "";
     let cardIndexes = [];
@@ -116,7 +112,6 @@ function evaluateHand(hand, iteration) {
     let valueArr = [two, three, four, five, six, seven, eight, nine, ten, jack, queen, king, ace]; /*Determine matching values*/
     let pairQty = 0;
     let tripleQty = 0;
-
     for (let i = 0; i < valueArr.length; i++) {
         if (valueArr[i] > 0) {/*determine highest card*/
             highCard = cardHeirarchy[i];
@@ -125,28 +120,23 @@ function evaluateHand(hand, iteration) {
         if (valueArr[i] === 2) {
             if (bestHandIndex < 1) {
                 bestHandIndex = 1;
-
             }
             pairQty = pairQty + 1;
-            cardsInvolved = cardsInvolved + " - " + cardHeirarchy[valueArr.indexOf(2)] + "s";
+            cardsInvolved = cardsInvolved + " - " + cardHeirarchy[i] + "s";
         }
         if (valueArr[i] == 3) {
             if (bestHandIndex < 3) {
                 bestHandIndex = 3;
             }
             tripleQty = tripleQty + 1;
-
             cardsInvolved = cardsInvolved + " - " + cardHeirarchy[valueArr.indexOf(3)] + "s";
         }
         if (valueArr[i] == 4) {
             if (bestHandIndex < 7) {
                 bestHandIndex = 7;
             }
-
             cardsInvolved = cardsInvolved + " - " + cardHeirarchy[valueArr.indexOf(4)] + "s";
         }
-
-
     }
 
     if (valueArr.indexOf(2) !== -1) {
@@ -158,7 +148,6 @@ function evaluateHand(hand, iteration) {
     if (valueArr.indexOf(4) !== -1) {
         compareCards[iteration] = valueArr.indexOf(4);
     }
-
     if (pairQty == 2) { /*checking for 2 pair*/
         if (bestHandIndex < 2) {
             bestHandIndex = 2;
@@ -179,27 +168,16 @@ function evaluateHand(hand, iteration) {
             bestHandIndex = 9;
         }
     }
-
     resultList.push(bestHandIndex);
-
     const playersDetails = ["playerHandDetails", "playerTwoHandDetails"];
     document.getElementById(playersDetails[iteration]).classList.remove("hide");
     document.getElementById(playersDetails[iteration]).innerHTML = handHeirarchy[Number(bestHandIndex)] + "  " + cardsInvolved + " <small><i>(" + highCard + " is your highest card)</i></small>";
-
     if (iteration === 0) {
         playerStatus[iteration] = Number(bestHandIndex);
     }
-
-
     if (iteration === 1) {
         let topHand = resultList.indexOf(Math.max(...resultList));
-
-
         if (Number(bestHandIndex) === playerStatus[0]) {
-            //console.log("highCard: " + highCard + " - typeof: " + (typeof Number(bestHandIndex)));
-            // let bestCard = compareCards.indexOf(Math.max(...compareCards));
-
-
             console.log("compareCards: " + compareCards);
             if (compareCards[0] > compareCards[1]) {
                 document.querySelector("[data-player='" + 0 + "']").classList.remove("alert-info");
@@ -208,25 +186,12 @@ function evaluateHand(hand, iteration) {
                 document.querySelector("[data-player='" + 1 + "']").classList.remove("alert-info");
                 document.querySelector("[data-player='" + 1 + "']").classList.add("alert-success");
             }
-
-
         } else {
-            //console.log("highCard: " + highCard + " - typeof: " + (typeof Number(bestHandIndex)));
             document.querySelector("[data-player='" + topHand + "']").classList.remove("alert-info");
             document.querySelector("[data-player='" + topHand + "']").classList.add("alert-success");
         }
-
-
     }
-
-
-
 }
-
-
-
-
-
 
 function play() {
     [].forEach.call(document.querySelectorAll("[data-player]"), function (e) {
@@ -239,7 +204,6 @@ function play() {
     cards = JSON.parse(localStorage.getItem("completeCards"));
     let activeCards = cards;
     let usedCardsArr = [];
-
     function generatePlayer(iteration) {
         cardsInvolved = "";
         bestHandIndex = 0;
@@ -256,7 +220,6 @@ function play() {
                 usedCardsArr.push(cards[genNumber].title);
             }
         }
-
         let titlesArr = [];
         let valuesArr = [];
         let handObj = [];
@@ -266,9 +229,8 @@ function play() {
             handObj.push({
                 suit: playersCards[i].substring(playersCards[i].indexOf("-") + 1, playersCards[i].length),
                 value: playersCards[i].substring(0, playersCards[i].indexOf("-"))
-            })
+            });
         }
-
         if (iteration === 0) {
             document.getElementById("playerCards").innerHTML = playerCardsHTML;
         }
@@ -277,14 +239,8 @@ function play() {
         }
         evaluateHand(handObj, iteration);
     }
-
-
-
     generatePlayer(0);
     generatePlayer(1);
-
-
-
 }
 
 
