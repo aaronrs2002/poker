@@ -6,26 +6,27 @@ let usedCardsArr = [];
 let player0Obj;
 let player1Obj;
 let activeRound = 1;
-let cardReplacements = [];
-
-
-//let player0Replace = [];
-//let player1Replace = [];
-let replaceObj = [player0Obj, player1Obj];
+//let cardReplacements = [];
 
 
 let bestHandIndex = 0;
-let resultList = [];
-let playerStatus = [0, 0];
+let resultList = [0, 0];
+
 let compareCards = [0, 0];
-function evaluateHand(hand, iteration) {
 
-    console.log("(typeof hand): " + (typeof hand));
-    console.log("JSON.stringify(hand): " + JSON.stringify(hand));
 
+function evaluateHand(iteration) {
+
+
+    console.log("(typeof player0Obj): " + (typeof player0Obj));
+    // console.log("JSON.stringify(hand): " + JSON.stringify(hand));
+    bestHandIndex = 0;
     let cardsInvolved = "";
     let cardIndexes = [];
-    const cardsArr = [hand[0], hand[1], hand[2], hand[3], hand[4]];
+    const playersHands = [player0Obj, player1Obj]
+
+    const cardsArr = [playersHands[iteration][0], playersHands[iteration][1], playersHands[iteration][2], playersHands[iteration][3], playersHands[iteration][4]];
+    console.log("cardsArr: " + JSON.stringify(cardsArr));
     let highCard;
     let flush = false;
     let straight = false;
@@ -184,67 +185,81 @@ function evaluateHand(hand, iteration) {
             bestHandIndex = 9;
         }
     }
-    resultList.push(bestHandIndex);
+    console.log("resultList: " + resultList + " Number(iteration): " + Number(iteration));
+    resultList[Number(iteration)] = bestHandIndex;
+    console.log("resultList: " + resultList + " Number(iteration): " + Number(iteration));
     const playersDetails = ["playerHandDetails", "playerTwoHandDetails"];
     document.getElementById(playersDetails[iteration]).classList.remove("hide");
 
     if (iteration === 0) {
-        let replaceOptionHTML = "";
-        for (let i = 0; i < valueArr.length; i++) {
-            if (valueArr[i] !== 0) {
-                replaceOptionHTML = replaceOptionHTML + "<button type='button' onClick='javascript:replace(" + i + ")' class='btn btn-secondary'>" + cardHeirarchy[i] + " (" + valueArr[i] + ")</button>";
-            }
-        }
-        document.getElementById(playersDetails[iteration]).innerHTML = handHeirarchy[Number(bestHandIndex)] + "  " + cardsInvolved + " <small><i>(" + highCard + " is your highest card)</i></small><br/>Replace: " + replaceOptionHTML;
+        document.getElementById(playersDetails[iteration]).innerHTML = handHeirarchy[resultList[Number(iteration)]] + "  " + cardsInvolved + " <small><i>(" + highCard + " is your highest card)</i></small>";
     } else {
-        document.getElementById(playersDetails[iteration]).innerHTML = handHeirarchy[Number(bestHandIndex)] + "  " + cardsInvolved + " <small><i>(" + highCard + " is player " + (Number(iteration) + 1) + "'s highest card)</i></small>";
+
+        document.getElementById(playersDetails[iteration]).innerHTML = handHeirarchy[resultList[Number(iteration)]] + "  " + cardsInvolved + " <small><i>(" + highCard + " is player " + (Number(iteration) + 1) + "'s highest card)</i></small>";
     }
+
+    document.getElementById(playersDetails[iteration]).classList.remove("hide");
 
 
     if (iteration === 0) {
-        playerStatus[iteration] = Number(bestHandIndex);
+        resultList[0] = Number(bestHandIndex);
     }
-    if (iteration === 1) {
-        let topHand = resultList.indexOf(Math.max(...resultList));
-        if (Number(bestHandIndex) === playerStatus[0]) {
-            console.log("compareCards: " + compareCards);
+    if (iteration === 1 || activeRound === 2) {
+        //let topHand = resultList.indexOf(Math.max(...resultList));
+        [].forEach.call(document.querySelectorAll(".alert[data-player]"), function (e) {
+            e.classList.add("alert-info");
+            e.classList.remove("alert-success");
+        });
+        let topHand = 1;
+        if (resultList[0] > resultList[1]) {
+            topHand = 0;
+        }
+        if (resultList[0] === resultList[1]) {
+            // console.log("compareCards: " + compareCards);
             if (compareCards[0] > compareCards[1]) {
-                document.querySelector("[data-player='" + 0 + "']").classList.remove("alert-info");
-                document.querySelector("[data-player='" + 0 + "']").classList.add("alert-success");
+                document.querySelector("[data-player='0']").classList.remove("alert-info");
+                document.querySelector("[data-player='0']").classList.add("alert-success");
             } else {
-                document.querySelector("[data-player='" + 1 + "']").classList.remove("alert-info");
-                document.querySelector("[data-player='" + 1 + "']").classList.add("alert-success");
+                document.querySelector("[data-player='1']").classList.remove("alert-info");
+                document.querySelector("[data-player='1']").classList.add("alert-success");
             }
         } else {
             document.querySelector("[data-player='" + topHand + "']").classList.remove("alert-info");
             document.querySelector("[data-player='" + topHand + "']").classList.add("alert-success");
         }
+        console.log("resultList: " + resultList);
+
     }
 }
 function generate(activeCards) {
     return Math.floor(Math.random() * activeCards.length);
 }
 function play() {
-    [].forEach.call(document.querySelectorAll("[data-player]"), function (e) {
-        e.classList.remove("alert-success");
+    [].forEach.call(document.querySelectorAll(".alert[data-player]"), function (e) {
         e.classList.add("alert-info");
+        e.classList.remove("alert-success");
+
     });
-    playerStatus = [0, 0];
-    compareCards = [0, 0];
-    resultList = [];
+    bestHandIndex = 0;
     cards = JSON.parse(localStorage.getItem("completeCards"));
     let activeCards = cards;
     usedCardsArr = [];
     function generatePlayer(iteration) {
         cardsInvolved = "";
-        bestHandIndex = 0;
         let playersCards = [];
         let playerCardsHTML = "";
 
         while (playersCards.length < 5) {
             let genNumber = generate(activeCards);
             if (usedCardsArr.indexOf(activeCards[genNumber].title) === -1) {
-                playerCardsHTML = playerCardsHTML + "<div class='card " + activeCards[genNumber].title + "' ></div>";
+                if (iteration !== 0) {
+                    playerCardsHTML = playerCardsHTML + "<div class='card " + activeCards[genNumber].title + "' ></div>";
+                } else {
+
+                    playerCardsHTML = playerCardsHTML + `<div ><ul class='list-unstyled'><li><div class='card ${activeCards[genNumber].title}' ></div></li><li><button class='btn btn-outline-info' data-replace='${playersCards.length}'
+                     onClick='javascript:replace("${activeCards[genNumber].title}",${Number(playersCards.length)})'>Replace</button></li></ul></div>`;
+                }
+
                 playersCards.push(cards[genNumber].title);
                 usedCardsArr.push(cards[genNumber].title);
             }
@@ -264,7 +279,7 @@ function play() {
             document.getElementById("playerTwoCards").innerHTML = playerCardsHTML;
             player1Obj = handObj;
         }
-        evaluateHand(handObj, iteration);
+        evaluateHand(iteration);
     }
     generatePlayer(0);
     generatePlayer(1);
@@ -272,12 +287,20 @@ function play() {
 
 
 
-function replace(whichCard) {
 
-    document.querySelector("button[title='play']").classList.add("hide");
-    document.querySelector("button[title='round-two']").classList.remove("hide");
+
+
+
+
+function replace(cardTitle, cardNum) {
+    // resetCompare();
+    document.querySelector("button[data-replace='" + cardNum + "']").remove();
+    document.getElementById("playerHandDetails").classList.remove("alert-success");
+    document.getElementById("playerHandDetails").classList.add("alert-info");
+
+
     activeRound = 2;
-    cardReplacements.push(Number(whichCard));
+    // cardReplacements.push(cardTitle);
     let tempHand = player0Obj;
     let availableCards = [];
     let playerCardsHTML = "";
@@ -289,27 +312,43 @@ function replace(whichCard) {
             availableCards.push(allCards[i].title);
         }
     }
+    const newNum = generate(availableCards);
 
     for (let i = 0; i < tempHand.length; i++) {
-        if (i === Number(whichCard)) {
-            const newNum = generate(availableCards);
+
+        if (tempHand[i].value + "-" + tempHand[i].suit === cardTitle) {
+
             tempHand[i] = {
                 suit: availableCards[newNum].substring(availableCards[newNum].indexOf("-") + 1, availableCards[newNum].length),
                 value: availableCards[newNum].substring(0, availableCards[newNum].indexOf("-"))
             }
+            usedCardsArr.push(availableCards[newNum])
+            document.querySelector("." + cardTitle).classList.add(availableCards[newNum]);
+            document.querySelector("." + cardTitle).classList.remove(cardTitle);
         }
-        playerCardsHTML = playerCardsHTML + "<div class='card " + tempHand[i].value + "-" + tempHand[i].suit + "' ></div>";
+
+        //  playerCardsHTML = playerCardsHTML + "<div class='card " + tempHand[i].value + "-" + tempHand[i].suit + "' ></div>";
     }
-    console.log("JSON.stringify(tempHand): " + JSON.stringify(tempHand));
+    let tempAvailable = [];
+    for (let i = 0; i < availableCards.length; i++) {
+        if (i !== Number(newNum)) {
+            tempAvailable.push(availableCards[i]);
+        }
 
-    console.log("playerCardsHTML: " + playerCardsHTML);
+    }
+    availableCards = tempAvailable;
+    // console.log("JSON.stringify(tempHand): " + JSON.stringify(tempHand));
+    //console.log("usedCardsArr: " + usedCardsArr);
+    // console.log("availableCards: " + availableCards);
 
+    //  console.log("playerCardsHTML: " + playerCardsHTML);
 
+    evaluateHand(0);
 
     player0Obj = tempHand;
 
-    // evaluateHand(tempHand, 0);
-    document.getElementById("playerCards").innerHTML = playerCardsHTML;
+    // evaluateHand( 0);
+    //  document.getElementById("playerCards").innerHTML = playerCardsHTML;
 }
 
 
