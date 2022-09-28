@@ -2,11 +2,27 @@ localStorage.setItem("completeCards", JSON.stringify(cards));
 const handHeirarchy = ["high-card", "pair", "two-pairs", "three-of-a-kind", "straight", "flush", "full-house", "four-of-a-kind", "straight-flush", "royal-flush"];
 const cardHeirarchy = ["two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "jack", "queen", "king", "ace"];
 const suitArr = ["diamonds", "hearts", "clubs", "spades"];
+let usedCardsArr = [];
+let player0Obj;
+let player1Obj;
+let activeRound = 1;
+let cardReplacements = [];
+
+
+//let player0Replace = [];
+//let player1Replace = [];
+let replaceObj = [player0Obj, player1Obj];
+
+
 let bestHandIndex = 0;
 let resultList = [];
 let playerStatus = [0, 0];
 let compareCards = [0, 0];
 function evaluateHand(hand, iteration) {
+
+    console.log("(typeof hand): " + (typeof hand));
+    console.log("JSON.stringify(hand): " + JSON.stringify(hand));
+
     let cardsInvolved = "";
     let cardIndexes = [];
     const cardsArr = [hand[0], hand[1], hand[2], hand[3], hand[4]];
@@ -171,7 +187,20 @@ function evaluateHand(hand, iteration) {
     resultList.push(bestHandIndex);
     const playersDetails = ["playerHandDetails", "playerTwoHandDetails"];
     document.getElementById(playersDetails[iteration]).classList.remove("hide");
-    document.getElementById(playersDetails[iteration]).innerHTML = handHeirarchy[Number(bestHandIndex)] + "  " + cardsInvolved + " <small><i>(" + highCard + " is your highest card)</i></small>";
+
+    if (iteration === 0) {
+        let replaceOptionHTML = "";
+        for (let i = 0; i < valueArr.length; i++) {
+            if (valueArr[i] !== 0) {
+                replaceOptionHTML = replaceOptionHTML + "<button type='button' onClick='javascript:replace(" + i + ")' class='btn btn-secondary'>" + cardHeirarchy[i] + " (" + valueArr[i] + ")</button>";
+            }
+        }
+        document.getElementById(playersDetails[iteration]).innerHTML = handHeirarchy[Number(bestHandIndex)] + "  " + cardsInvolved + " <small><i>(" + highCard + " is your highest card)</i></small><br/>Replace: " + replaceOptionHTML;
+    } else {
+        document.getElementById(playersDetails[iteration]).innerHTML = handHeirarchy[Number(bestHandIndex)] + "  " + cardsInvolved + " <small><i>(" + highCard + " is player " + (Number(iteration) + 1) + "'s highest card)</i></small>";
+    }
+
+
     if (iteration === 0) {
         playerStatus[iteration] = Number(bestHandIndex);
     }
@@ -192,7 +221,9 @@ function evaluateHand(hand, iteration) {
         }
     }
 }
-
+function generate(activeCards) {
+    return Math.floor(Math.random() * activeCards.length);
+}
 function play() {
     [].forEach.call(document.querySelectorAll("[data-player]"), function (e) {
         e.classList.remove("alert-success");
@@ -203,29 +234,23 @@ function play() {
     resultList = [];
     cards = JSON.parse(localStorage.getItem("completeCards"));
     let activeCards = cards;
-    let usedCardsArr = [];
+    usedCardsArr = [];
     function generatePlayer(iteration) {
         cardsInvolved = "";
         bestHandIndex = 0;
         let playersCards = [];
         let playerCardsHTML = "";
-        function generate() {
-            return Math.floor(Math.random() * activeCards.length);
-        }
+
         while (playersCards.length < 5) {
-            let genNumber = generate();
+            let genNumber = generate(activeCards);
             if (usedCardsArr.indexOf(activeCards[genNumber].title) === -1) {
                 playerCardsHTML = playerCardsHTML + "<div class='card " + activeCards[genNumber].title + "' ></div>";
                 playersCards.push(cards[genNumber].title);
                 usedCardsArr.push(cards[genNumber].title);
             }
         }
-        let titlesArr = [];
-        let valuesArr = [];
         let handObj = [];
         for (let i = 0; i < playersCards.length; i++) {
-            titlesArr.push(playersCards[i].substring(playersCards[i].indexOf("-") + 1, playersCards[i].length));
-            valuesArr.push(playersCards[i].substring(0, playersCards[i].indexOf("-")));
             handObj.push({
                 suit: playersCards[i].substring(playersCards[i].indexOf("-") + 1, playersCards[i].length),
                 value: playersCards[i].substring(0, playersCards[i].indexOf("-"))
@@ -233,9 +258,11 @@ function play() {
         }
         if (iteration === 0) {
             document.getElementById("playerCards").innerHTML = playerCardsHTML;
+            player0Obj = handObj;
         }
         if (iteration === 1) {
             document.getElementById("playerTwoCards").innerHTML = playerCardsHTML;
+            player1Obj = handObj;
         }
         evaluateHand(handObj, iteration);
     }
@@ -245,7 +272,45 @@ function play() {
 
 
 
+function replace(whichCard) {
 
+    document.querySelector("button[title='play']").classList.add("hide");
+    document.querySelector("button[title='round-two']").classList.remove("hide");
+    activeRound = 2;
+    cardReplacements.push(Number(whichCard));
+    let tempHand = player0Obj;
+    let availableCards = [];
+    let playerCardsHTML = "";
+
+
+    const allCards = JSON.parse(localStorage.getItem("completeCards"));
+    for (let i = 0; i < allCards.length; i++) {
+        if (usedCardsArr.indexOf(allCards[i].title) === -1) {
+            availableCards.push(allCards[i].title);
+        }
+    }
+
+    for (let i = 0; i < tempHand.length; i++) {
+        if (i === Number(whichCard)) {
+            const newNum = generate(availableCards);
+            tempHand[i] = {
+                suit: availableCards[newNum].substring(availableCards[newNum].indexOf("-") + 1, availableCards[newNum].length),
+                value: availableCards[newNum].substring(0, availableCards[newNum].indexOf("-"))
+            }
+        }
+        playerCardsHTML = playerCardsHTML + "<div class='card " + tempHand[i].value + "-" + tempHand[i].suit + "' ></div>";
+    }
+    console.log("JSON.stringify(tempHand): " + JSON.stringify(tempHand));
+
+    console.log("playerCardsHTML: " + playerCardsHTML);
+
+
+
+    player0Obj = tempHand;
+
+    // evaluateHand(tempHand, 0);
+    document.getElementById("playerCards").innerHTML = playerCardsHTML;
+}
 
 
 /*https://www.telegraph.co.uk/betting/casino-guides/poker/hand-rankings-chart-cheat-sheet/*/
