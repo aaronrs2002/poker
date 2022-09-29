@@ -57,6 +57,14 @@ function showAlert(status, message) {
 }
 
 function evaluateHand(iteration) {
+
+    if (replaceAttempts === 0) {/*trying to fix a bug that keeps these hiiden*/
+        [].forEach.call(document.querySelectorAll("span.badge[data-replace]"), function (e) {
+            e.classList.remove("hide");
+        });
+        console.log("unhide the badge");
+    }
+
     bestHandIndex = 0;
     let cardsInvolved = "";
     let cardIndexes = [];
@@ -332,7 +340,7 @@ function play(playerBet) {
         if (iteration === 0) {
             document.getElementById("playerCards").innerHTML = playerCardsHTML;
             player0Obj = handObj;
-            [].forEach.call(document.querySelectorAll("span[data-replace]"), function (e) {
+            [].forEach.call(document.querySelectorAll("span.badge[data-replace]"), function (e) {
                 e.classList.remove("hide");
             });
         }
