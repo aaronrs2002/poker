@@ -13,6 +13,7 @@ let replaceAttempts = 0;
 let playerCardsInvolved = "";
 let playerHighCard = "";
 /*DOES NOT RESET AT DEAL*/
+let betPaid = false;
 let playerMoney = 500;
 if (localStorage.getItem("balance") && Number(localStorage.getItem("balance"))) {
     playerMoney = Number(localStorage.getItem("balance"));
@@ -27,7 +28,6 @@ function setPlayerMoney(passPlayerMoney) {
     localStorage.setItem("balance", passPlayerMoney);
 }
 
-
 function showAlert(status, message) {
     function enablePlayBts() {
         [].forEach.call(document.querySelectorAll('.dealAmt'), function (e) {
@@ -35,13 +35,16 @@ function showAlert(status, message) {
         });
     }
     if (status === "alert-success") {
+        if (betPaid === false) {
+            playerMoney = playerMoney + bet;
+            setPlayerMoney(playerMoney);
+            betPaid = true;
+        }
         enablePlayBts();
         [].forEach.call(document.querySelectorAll(".card span.badge"), function (e) {
             e.classList.add("hide");
         });
-
     }
-
     if (message.indexOf("All out of chances.") !== -1) {
         enablePlayBts();
     }
@@ -50,7 +53,6 @@ function showAlert(status, message) {
     document.getElementById("status").classList.remove("hide");
     document.getElementById("status").classList.add(status);
     document.getElementById("message").innerHTML = message;
-
     return false;
 }
 
@@ -226,13 +228,9 @@ function evaluateHand(iteration) {
         playerHighCard = highCard;
         document.getElementById(playersDetails[iteration]).innerHTML = handHeirarchy[resultList[Number(iteration)]] + "  " + cardsInvolved + " <small><i>(" + highCard + " is your highest card)</i></small>";
     } else {
-
         document.getElementById(playersDetails[iteration]).innerHTML = handHeirarchy[resultList[Number(iteration)]] + "  " + cardsInvolved + " <small><i>(" + highCard + " is player " + (Number(iteration) + 1) + "'s highest card)</i></small>";
     }
-
     document.getElementById(playersDetails[iteration]).classList.remove("hide");
-
-
     if (iteration === 0) {
         resultList[0] = Number(bestHandIndex);
     }
@@ -245,9 +243,7 @@ function evaluateHand(iteration) {
         let topHand = 1;
         if (resultList[0] > resultList[1]) {
             topHand = 0;
-            playerMoney = playerMoney + bet;
-            setPlayerMoney(playerMoney);
-            console.log("added to bet 1");
+
             showAlert("alert-success", "You won $" + bet + " with " + handHeirarchy[resultList[0]] + "  " + playerCardsInvolved + " <small><i>(" + playerHighCard + " is your highest card)</i></small>");
         }
         if (resultList[0] === resultList[1]) {
@@ -257,9 +253,7 @@ function evaluateHand(iteration) {
             if (compareCards[0] > compareCards[1]) {
                 document.querySelector("[data-player='0']").classList.remove("alert-info");
                 document.querySelector("[data-player='0']").classList.add("alert-success");
-                playerMoney = playerMoney + bet;
-                setPlayerMoney(playerMoney);
-                console.log("added to bet 2");
+
                 showAlert("alert-success", "You won $" + bet + " with " + handHeirarchy[resultList[0]] + "  " + playerCardsInvolved + " <small><i>(" + playerHighCard + " is your highest card)</i></small>");
             }
             if (compareCards[0] < compareCards[1]) {
@@ -279,8 +273,6 @@ function evaluateHand(iteration) {
             setPlayerMoney(playerMoney)
             showAlert("alert-danger", "All out of chances. You lost $" + bet);
         } else if (!document.querySelector("span[data-replace]") && topHand === 0) {
-            playerMoney = playerMoney + bet;
-            setPlayerMoney(playerMoney);
             showAlert("alert-success", "You just barely won $" + bet);
         }
     }
@@ -289,8 +281,8 @@ function evaluateHand(iteration) {
 function generate(activeCards) {
     return Math.floor(Math.random() * activeCards.length);
 }
-
 function play(playerBet) {
+    betPaid = false;
     [].forEach.call(document.querySelectorAll('.dealAmt'), function (e) {
         e.disabled = true;
     });
@@ -304,7 +296,6 @@ function play(playerBet) {
     [].forEach.call(document.querySelectorAll(".alert[data-player]"), function (e) {
         e.classList.add("alert-info");
         e.classList.remove("alert-success");
-
     });
     bestHandIndex = 0;
     cards = JSON.parse(localStorage.getItem("completeCards"));
@@ -314,18 +305,15 @@ function play(playerBet) {
         cardsInvolved = "";
         let playersCards = [];
         let playerCardsHTML = "";
-
         while (playersCards.length < 5) {
             let genNumber = generate(activeCards);
             if (usedCardsArr.indexOf(activeCards[genNumber].title) === -1) {
                 if (iteration !== 0) {
                     playerCardsHTML = playerCardsHTML + "<div class='card " + activeCards[genNumber].title + "' ></div>";
                 } else {
-
                     playerCardsHTML = playerCardsHTML + `<div class='card ${activeCards[genNumber].title}' ><span class='badge text-bg-primary pointer' data-replace='${playersCards.length}'
                     onClick='javascript:replace("${activeCards[genNumber].title}",${Number(playersCards.length)})'>Replace</span></div>`;
                 }
-
                 playersCards.push(cards[genNumber].title);
                 usedCardsArr.push(cards[genNumber].title);
             }
@@ -351,10 +339,7 @@ function play(playerBet) {
     generatePlayer(1);
 }
 
-
 function replace(cardTitle, cardNum) {
-    let playerCardsInvolved = "";
-    let playerHighCard = "";
     replaceAttempts = replaceAttempts + 1;
     document.querySelector("span[data-replace='" + cardNum + "']").remove();
     document.getElementById("playerHandDetails").classList.remove("alert-success");
@@ -362,8 +347,6 @@ function replace(cardTitle, cardNum) {
     activeRound = 2;
     let tempHand = player0Obj;
     let availableCards = [];
-    let playerCardsHTML = "";
-
     const allCards = JSON.parse(localStorage.getItem("completeCards"));
     for (let i = 0; i < allCards.length; i++) {
         if (usedCardsArr.indexOf(allCards[i].title) === -1) {
@@ -371,7 +354,6 @@ function replace(cardTitle, cardNum) {
         }
     }
     const newNum = generate(availableCards);
-
     for (let i = 0; i < tempHand.length; i++) {
         if (tempHand[i].value + "-" + tempHand[i].suit === cardTitle) {
 
@@ -394,8 +376,6 @@ function replace(cardTitle, cardNum) {
     evaluateHand(0);
     player0Obj = tempHand;
 }
-
-
 /*https://www.telegraph.co.uk/betting/casino-guides/poker/hand-rankings-chart-cheat-sheet/*/
 
 /*royal-flush: five consecutive cards of the same suit in order of value from 10 through to ace*/
