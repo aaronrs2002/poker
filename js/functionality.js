@@ -290,11 +290,7 @@ function generate(activeCards) {
     return Math.floor(Math.random() * activeCards.length);
 }
 function play(playerBet) {
-
-    //document.querySelector("span[data-replace='" + cardNum + "']").classList.add("hide");
-
-    //document.querySelector("span[data-replace='" + cardNum + "']").classList.add("hide");
-
+    replaceAttempts = 0;
     betPaid = false;
     [].forEach.call(document.querySelectorAll('.dealAmt'), function (e) {
         e.disabled = true;
