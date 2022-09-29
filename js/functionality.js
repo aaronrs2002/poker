@@ -226,9 +226,9 @@ function evaluateHand(iteration) {
     if (iteration === 0) {
         playerCardsInvolved = cardsInvolved;
         playerHighCard = highCard;
-        document.getElementById(playersDetails[iteration]).innerHTML = handHeirarchy[resultList[Number(iteration)]] + "  " + cardsInvolved + " <small><i>(" + highCard + " is your highest card)</i></small>";
+        document.getElementById(playersDetails[iteration]).innerHTML = "You have: " + handHeirarchy[resultList[Number(iteration)]] + "  " + cardsInvolved + " <small><i>(" + highCard + " is your highest card)</i></small>";
     } else {
-        document.getElementById(playersDetails[iteration]).innerHTML = handHeirarchy[resultList[Number(iteration)]] + "  " + cardsInvolved + " <small><i>(" + highCard + " is player " + (Number(iteration) + 1) + "'s highest card)</i></small>";
+        document.getElementById(playersDetails[iteration]).innerHTML = "<i class='fas fa-user'></i> " + handHeirarchy[resultList[Number(iteration)]] + "  " + cardsInvolved + " <small><i>(" + highCard + " is player " + (Number(iteration) + 1) + "'s highest card)</i></small>";
     }
     document.getElementById(playersDetails[iteration]).classList.remove("hide");
     if (iteration === 0) {
