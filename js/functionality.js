@@ -341,7 +341,7 @@ function play(playerBet) {
 
 function replace(cardTitle, cardNum) {
     replaceAttempts = replaceAttempts + 1;
-    document.querySelector("span[data-replace='" + cardNum + "']").remove();
+    document.querySelector("span[data-replace='" + cardNum + "']").classList.add("hide");
     document.getElementById("playerHandDetails").classList.remove("alert-success");
     document.getElementById("playerHandDetails").classList.add("alert-info");
     activeRound = 2;
