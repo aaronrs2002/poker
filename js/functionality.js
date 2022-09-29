@@ -269,6 +269,7 @@ function evaluateHand(iteration) {
             }
         }
 
+        console.log("replaceAttempts: " + replaceAttempts);
 
         if (replaceAttempts === 5 && topHand !== 0) {
             playerMoney = playerMoney - bet;
@@ -284,9 +285,6 @@ function generate(activeCards) {
     return Math.floor(Math.random() * activeCards.length);
 }
 function play(playerBet) {
-    [].forEach.call(document.querySelectorAll("span[data-replace]"), function (e) {
-        e.classList.remove("hide");
-    });
     replaceAttempts = 0;
     betPaid = false;
     [].forEach.call(document.querySelectorAll('.dealAmt'), function (e) {
@@ -334,6 +332,9 @@ function play(playerBet) {
         if (iteration === 0) {
             document.getElementById("playerCards").innerHTML = playerCardsHTML;
             player0Obj = handObj;
+            [].forEach.call(document.querySelectorAll("span[data-replace]"), function (e) {
+                e.classList.remove("hide");
+            });
         }
         if (iteration === 1) {
             document.getElementById("playerTwoCards").innerHTML = playerCardsHTML;
