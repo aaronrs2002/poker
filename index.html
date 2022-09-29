@@ -26,13 +26,13 @@
     <div class="container">
         <div class="row">
             <div class="btn-group form-control mb-2  animated fadeInDown" role="group">
-                <button type="button" class="btn btn-primary dealAmt" alt="1" onClick="deal(Number(1))">$1</button>
-                <button type="button" class="btn btn-primary dealAmt" alt="5" onClick="deal(Number(5))">$5</button>
-                <button type="button" class="btn btn-primary dealAmt" alt="10" onClick="deal(Number(10))">$10</button>
-                <button type="button" class="btn btn-primary dealAmt" alt="25" onClick="deal(Number(25))">$25</button>
-                <button type="button" class="btn btn-primary dealAmt" alt="50" onClick="deal(Number(50))">$50</button>
+                <button type="button" class="btn btn-primary dealAmt" alt="1" onClick="play(Number(1))">$1</button>
+                <button type="button" class="btn btn-primary dealAmt" alt="5" onClick="play(Number(5))">$5</button>
+                <button type="button" class="btn btn-primary dealAmt" alt="10" onClick="play(Number(10))">$10</button>
+                <button type="button" class="btn btn-primary dealAmt" alt="25" onClick="play(Number(25))">$25</button>
+                <button type="button" class="btn btn-primary dealAmt" alt="50" onClick="play(Number(50))">$50</button>
                 <button type="button" class="btn btn-primary dealAmt" alt="100"
-                    onClick="deal(Number(100))">$100</button>
+                    onClick="play(Number(100))">$100</button>
             </div>
 
             <div class="col-md-12">
@@ -59,15 +59,17 @@
             <div class="col-md-12">
                 <div class="d-flex flex-row" id="playerCards"></div>
             </div>
+            <div class="col-md-12 py-2">
+                <div class="alert hide" id="status" role="alert">
+                    <h1 id="message"></h1>
+                </div>
+            </div>
             <div class="col-md-12">
                 <div class="alert alert-info hide" role="alert" id="playerHandDetails" data-player="0"></div>
 
-                <div class="d-grid gap-2">
-                    <button class="btn btn-primary" type="button" title="play" onClick="javascript:play()">Play</button>
 
-
-                </div>
             </div>
+
         </div>
     </div>
 

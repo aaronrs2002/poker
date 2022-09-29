@@ -6,14 +6,33 @@ let usedCardsArr = [];
 let player0Obj;
 let player1Obj;
 let activeRound = 1;
-//let cardReplacements = [];
-
-
 let bestHandIndex = 0;
 let resultList = [0, 0];
-
 let compareCards = [0, 0];
+let replaceAttempts = 0;
+/*DOES NOT RESET AT DEAL*/
+let playerMoney = 500;
+if (localStorage.getItem("balance") && Number(localStorage.getItem("balance"))) {
+    playerMoney = Number(localStorage.getItem("balance"));
+}
+document.querySelector("#playerMoney").innerHTML = playerMoney;
+let bet = 0;
+function setPlayerMoney(passPlayerMoney) {
+    playerMoney = passPlayerMoney;
+    playerMoney = Math.round(playerMoney);
+    document.getElementById("playerMoney").innerHTML = passPlayerMoney;
+    document.querySelector("#playerMoney").innerHTML = passPlayerMoney;/*SAFARI BUG NEEDS BOTH*/
+    localStorage.setItem("balance", passPlayerMoney);
+}
 
+
+function showAlert(status, message) {
+    document.getElementById("status").classList.remove("alert-success");
+    document.getElementById("status").classList.remove("alert-danger");
+    document.getElementById("status").classList.remove("hide");
+    document.getElementById("status").classList.add(status);
+    document.getElementById("message").innerHTML = message;
+}
 
 function evaluateHand(iteration) {
 
@@ -213,28 +232,93 @@ function evaluateHand(iteration) {
         let topHand = 1;
         if (resultList[0] > resultList[1]) {
             topHand = 0;
+
+            let winnings = 0;
+            if (replaceAttempts === 0) {
+                winnings = bet;
+
+            } else {
+                winnings = (bet / replaceAttempts);
+                console.log("bet / replaceAttempts: " + bet / replaceAttempts);
+            }
+            showAlert("alert-success", "You won $" + winnings + " with " + handHeirarchy[resultList[Number(iteration)]] + "  " + cardsInvolved + " <small><i>(" + highCard + " is your highest card)</i></small>");
+
+            if (replaceAttempts === 0) {
+                playerMoney = playerMoney + bet;
+
+            } else {
+                playerMoney = playerMoney + (bet / replaceAttempts);
+                console.log("bet / replaceAttempts: " + bet / replaceAttempts);
+            }
+            playerMoney = playerMoney + winnings
+            setPlayerMoney(playerMoney);
+        } else {
+            // showAlert("alert-danger", "You lost.");
         }
         if (resultList[0] === resultList[1]) {
-            // console.log("compareCards: " + compareCards);
+            let winnings = 0;
+            if (replaceAttempts === 0) {
+                winnings = bet;
+
+            } else {
+                winnings = (bet / replaceAttempts);
+                console.log("bet / replaceAttempts: " + bet / replaceAttempts);
+            }
             if (compareCards[0] > compareCards[1]) {
                 document.querySelector("[data-player='0']").classList.remove("alert-info");
                 document.querySelector("[data-player='0']").classList.add("alert-success");
+                showAlert("alert-success", "You won $" + winnings + " with " + handHeirarchy[resultList[Number(iteration)]] + "  " + cardsInvolved + " <small><i>(" + highCard + " is your highest card)</i></small>");
+
+
+                if (replaceAttempts === 0) {
+                    playerMoney = playerMoney + bet;
+
+                } else {
+                    playerMoney = playerMoney + (bet / replaceAttempts);
+                    console.log("bet / replaceAttempts: " + bet / replaceAttempts);
+                }
+                playerMoney = playerMoney + winnings
+                setPlayerMoney(playerMoney);
             } else {
                 document.querySelector("[data-player='1']").classList.remove("alert-info");
                 document.querySelector("[data-player='1']").classList.add("alert-success");
+                // showAlert("alert-danger", "You lost.");
             }
         } else {
             document.querySelector("[data-player='" + topHand + "']").classList.remove("alert-info");
             document.querySelector("[data-player='" + topHand + "']").classList.add("alert-success");
         }
         console.log("resultList: " + resultList);
+        if (!document.querySelector("button[data-replace]")) {
+            showAlert("alert-danger", "All out of chances. You lost $" + bet);
+            playerMoney = playerMoney - bet;
+            setPlayerMoney(playerMoney)
+        }
 
     }
 }
+
+
+
 function generate(activeCards) {
     return Math.floor(Math.random() * activeCards.length);
 }
-function play() {
+
+
+
+function play(playerBet) {
+    document.getElementById("playerHandDetails").classList.add("hide");
+    document.getElementById("playerTwoHandDetails").classList.add("hide");
+    document.getElementById("playerTwoCards").innerHTML = "";
+    document.getElementById("playerCards").innerHTML = "";
+    document.getElementById("status").classList.add("hide");
+
+
+
+    bet = playerBet;
+    document.getElementById("betTarget").innerHTML = "$" + bet;
+    // document.getElementById("playerHandDetails").classList.remove("hide");
+    // document.getElementById("playerTwoHandDetails").classList.remove("hide");
     [].forEach.call(document.querySelectorAll(".alert[data-player]"), function (e) {
         e.classList.add("alert-info");
         e.classList.remove("alert-success");
@@ -293,6 +377,7 @@ function play() {
 
 
 function replace(cardTitle, cardNum) {
+    replaceAttempts = replaceAttempts + 1;
     // resetCompare();
     document.querySelector("button[data-replace='" + cardNum + "']").remove();
     document.getElementById("playerHandDetails").classList.remove("alert-success");
