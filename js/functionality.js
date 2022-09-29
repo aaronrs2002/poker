@@ -53,7 +53,7 @@ function showAlert(status, message) {
     document.getElementById("status").classList.remove("hide");
     document.getElementById("status").classList.add(status);
     document.getElementById("message").innerHTML = message;
-    return false;
+    // return false;
 }
 
 function evaluateHand(iteration) {
@@ -248,6 +248,9 @@ function evaluateHand(iteration) {
         }
         if (resultList[0] === resultList[1]) {
             if (compareCards[0] === compareCards[1]) {
+                [].forEach.call(document.querySelectorAll("span[data-replace]"), function (e) {
+                    e.classList.remove("hide");
+                });
                 showAlert("alert-danger", "It's a draw so far. Replace some cards.");
             }
             if (compareCards[0] > compareCards[1]) {
@@ -257,6 +260,9 @@ function evaluateHand(iteration) {
                 showAlert("alert-success", "You won $" + bet + " with " + handHeirarchy[resultList[0]] + "  " + playerCardsInvolved + " <small><i>(" + playerHighCard + " is your highest card)</i></small>");
             }
             if (compareCards[0] < compareCards[1]) {
+                [].forEach.call(document.querySelectorAll("span[data-replace]"), function (e) {
+                    e.classList.remove("hide");
+                });
                 document.querySelector("[data-player='1']").classList.remove("alert-info");
                 document.querySelector("[data-player='1']").classList.add("alert-success");
                 showAlert("alert-danger", "You're down. Replace some cards.");
@@ -268,11 +274,13 @@ function evaluateHand(iteration) {
                 showAlert("alert-danger", "You're down. Replace some cards.");
             }
         }
-        if (!document.querySelector("span[data-replace]") && topHand !== 0) {
+
+
+        if (replaceAttempts === 5 && topHand !== 0) {
             playerMoney = playerMoney - bet;
             setPlayerMoney(playerMoney)
             showAlert("alert-danger", "All out of chances. You lost $" + bet);
-        } else if (!document.querySelector("span[data-replace]") && topHand === 0) {
+        } else if (replaceAttempts === 5 && topHand === 0) {
             showAlert("alert-success", "You just barely won $" + bet);
         }
     }
@@ -282,6 +290,11 @@ function generate(activeCards) {
     return Math.floor(Math.random() * activeCards.length);
 }
 function play(playerBet) {
+
+    //document.querySelector("span[data-replace='" + cardNum + "']").classList.add("hide");
+
+    //document.querySelector("span[data-replace='" + cardNum + "']").classList.add("hide");
+
     betPaid = false;
     [].forEach.call(document.querySelectorAll('.dealAmt'), function (e) {
         e.disabled = true;
