@@ -19,6 +19,19 @@
     <link href="https://aaronrs2002.github.io/black-jack/css/style.css" rel="stylesheet">
 
     <title>Poker</title>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-JJWFFXF8G0"></script>
+    <script>
+        const urlStr = window.location.href;
+        if (urlStr.indexOf("file:///Users/") !== -1) {
+            console.log("Not running GA");
+        } else {
+            window.dataLayer = window.dataLayer || [];
+            function gtag() { dataLayer.push(arguments); }
+            gtag('js', new Date());
+            gtag('config', 'G-JJWFFXF8G0');
+        }
+    </script>
 </head>
 
 <body>
