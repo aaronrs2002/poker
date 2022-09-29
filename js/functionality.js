@@ -5,10 +5,11 @@ const suitArr = ["diamonds", "hearts", "clubs", "spades"];
 let usedCardsArr = [];
 let player0Obj;
 let player1Obj;
+let player2Obj;
 let activeRound = 1;
 let bestHandIndex = 0;
-let resultList = [0, 0];
-let compareCards = [0, 0];
+let resultList = [0, 0, 0];
+let compareCards = [0, 0, 0];
 let replaceAttempts = 0;
 let playerCardsInvolved = "";
 let playerHighCard = "";
@@ -34,6 +35,10 @@ function showAlert(status, message) {
             e.disabled = false;
         });
     }
+    if (replaceAttempts === 5 && message.indexOf("All out of chances.") !== -1) {
+        enablePlayBts();
+    }
+
     if (status === "alert-success") {
         if (betPaid === false) {
             playerMoney = playerMoney + bet;
@@ -45,9 +50,7 @@ function showAlert(status, message) {
             e.classList.add("hide");
         });
     }
-    if (message.indexOf("All out of chances.") !== -1) {
-        enablePlayBts();
-    }
+
     document.getElementById("status").classList.remove("alert-success");
     document.getElementById("status").classList.remove("alert-danger");
     document.getElementById("status").classList.remove("hide");
@@ -65,7 +68,7 @@ function evaluateHand(iteration) {
     bestHandIndex = 0;
     let cardsInvolved = "";
     let cardIndexes = [];
-    const playersHands = [player0Obj, player1Obj]
+    const playersHands = [player0Obj, player1Obj, player2Obj]
     const cardsArr = [playersHands[iteration][0], playersHands[iteration][1], playersHands[iteration][2], playersHands[iteration][3], playersHands[iteration][4]];
     let highCard;
     let flush = false;
@@ -225,7 +228,7 @@ function evaluateHand(iteration) {
         }
     }
     resultList[Number(iteration)] = bestHandIndex;
-    const playersDetails = ["playerHandDetails", "playerTwoHandDetails"];
+    const playersDetails = ["playerHandDetails", "playerTwoHandDetails", "playerThreeHandDetails"];
     document.getElementById(playersDetails[iteration]).classList.remove("hide");
     if (iteration === 0) {
         playerCardsInvolved = cardsInvolved;
@@ -238,36 +241,56 @@ function evaluateHand(iteration) {
     if (iteration === 0) {
         resultList[0] = Number(bestHandIndex);
     }
-    if (iteration === 1 || activeRound === 2) {
-        //let topHand = resultList.indexOf(Math.max(...resultList));
+    if (iteration === 2 || activeRound === 2) {
+        let winningHand = Math.max(...resultList);
+        topHand = resultList.indexOf(winningHand);
+        /*start how many times number in array*/
+        function getOccurrence(resultList, value) {
+            var count = 0;
+            resultList.forEach((v) => (v === value && count++));
+            return count;
+        }
+        if (getOccurrence(resultList, winningHand) > 1) {
+            let winningCard = Math.max(...compareCards);
+            if (getOccurrence(compareCards, winningCard) > 1) {
+                showAlert("alert-danger", "It's a draw so far. Replace some cards.");
+            } else {
+                let tempWinners = [];
+                for (let i = 0; i < resultList.length; i++) {
+                    if (resultList[i] === winningHand) {
+                        tempWinners.push(compareCards[i]);
+                    }
+                }
+                winningCard = Math.max(...tempWinners);
+                topHand = compareCards.indexOf(winningCard)
+            }
+        }
         [].forEach.call(document.querySelectorAll(".alert[data-player]"), function (e) {
             e.classList.add("alert-info");
             e.classList.remove("alert-success");
         });
-        let topHand = 1;
-        if (resultList[0] > resultList[1]) {
-            topHand = 0;
+        if (topHand === 0) {
             showAlert("alert-success", "You won $" + bet + " with " + handHeirarchy[resultList[0]] + "  " + playerCardsInvolved + " <small><i>(" + playerHighCard + " is your highest card)</i></small>");
         }
-        if (resultList[0] === resultList[1]) {
-            if (compareCards[0] === compareCards[1]) {
+        if (resultList[0] === resultList[1] || resultList[0] === resultList[2]) {
+            if (compareCards[0] === compareCards[1] || compareCards[0] === compareCards[2]) {
                 showAlert("alert-danger", "It's a draw so far. Replace some cards.");
             }
-            if (compareCards[0] > compareCards[1]) {
+            if (topHand === 0) {
                 document.querySelector("[data-player='0']").classList.remove("alert-info");
                 document.querySelector("[data-player='0']").classList.add("alert-success");
 
                 showAlert("alert-success", "You won $" + bet + " with " + handHeirarchy[resultList[0]] + "  " + playerCardsInvolved + " <small><i>(" + playerHighCard + " is your highest card)</i></small>");
             }
-            if (compareCards[0] < compareCards[1]) {
-                document.querySelector("[data-player='1']").classList.remove("alert-info");
-                document.querySelector("[data-player='1']").classList.add("alert-success");
+            if (topHand !== 0) {
+                document.querySelector("[data-player='" + topHand + "']").classList.remove("alert-info");
+                document.querySelector("[data-player='" + topHand + "']").classList.add("alert-success");
                 showAlert("alert-danger", "You're down. Replace some cards.");
             }
         } else {
             document.querySelector("[data-player='" + topHand + "']").classList.remove("alert-info");
             document.querySelector("[data-player='" + topHand + "']").classList.add("alert-success");
-            if (topHand === 1) {
+            if (topHand !== 0) {
                 showAlert("alert-danger", "You're down. Replace some cards.");
             }
         }
@@ -292,6 +315,8 @@ function play(playerBet) {
     });
     document.getElementById("playerHandDetails").classList.add("hide");
     document.getElementById("playerTwoHandDetails").classList.add("hide");
+    document.getElementById("playerThreeHandDetails").classList.add("hide");
+    document.getElementById("playerThreeCards").innerHTML = "";
     document.getElementById("playerTwoCards").innerHTML = "";
     document.getElementById("playerCards").innerHTML = "";
     document.getElementById("status").classList.add("hide");
@@ -340,10 +365,16 @@ function play(playerBet) {
             document.getElementById("playerTwoCards").innerHTML = playerCardsHTML;
             player1Obj = handObj;
         }
+
+        if (iteration === 2) {
+            document.getElementById("playerThreeCards").innerHTML = playerCardsHTML;
+            player2Obj = handObj;
+        }
         evaluateHand(iteration);
     }
     generatePlayer(0);
     generatePlayer(1);
+    generatePlayer(2);
 }
 
 function replace(cardTitle, cardNum) {
