@@ -10,6 +10,8 @@ let bestHandIndex = 0;
 let resultList = [0, 0];
 let compareCards = [0, 0];
 let replaceAttempts = 0;
+let playerCardsInvolved = "";
+let playerHighCard = "";
 /*DOES NOT RESET AT DEAL*/
 let playerMoney = 500;
 if (localStorage.getItem("balance") && Number(localStorage.getItem("balance"))) {
@@ -27,6 +29,13 @@ function setPlayerMoney(passPlayerMoney) {
 
 
 function showAlert(status, message) {
+    if (status === "alert-success") {
+
+        [].forEach.call(document.querySelectorAll(".card span.badge"), function (e) {
+            e.classList.add("hide");
+        })
+
+    }
     document.getElementById("status").classList.remove("alert-success");
     document.getElementById("status").classList.remove("alert-danger");
     document.getElementById("status").classList.remove("hide");
@@ -35,17 +44,11 @@ function showAlert(status, message) {
 }
 
 function evaluateHand(iteration) {
-
-
-    console.log("(typeof player0Obj): " + (typeof player0Obj));
-    // console.log("JSON.stringify(hand): " + JSON.stringify(hand));
     bestHandIndex = 0;
     let cardsInvolved = "";
     let cardIndexes = [];
     const playersHands = [player0Obj, player1Obj]
-
     const cardsArr = [playersHands[iteration][0], playersHands[iteration][1], playersHands[iteration][2], playersHands[iteration][3], playersHands[iteration][4]];
-    console.log("cardsArr: " + JSON.stringify(cardsArr));
     let highCard;
     let flush = false;
     let straight = false;
@@ -204,13 +207,12 @@ function evaluateHand(iteration) {
             bestHandIndex = 9;
         }
     }
-    console.log("resultList: " + resultList + " Number(iteration): " + Number(iteration));
     resultList[Number(iteration)] = bestHandIndex;
-    console.log("resultList: " + resultList + " Number(iteration): " + Number(iteration));
     const playersDetails = ["playerHandDetails", "playerTwoHandDetails"];
     document.getElementById(playersDetails[iteration]).classList.remove("hide");
-
     if (iteration === 0) {
+        playerCardsInvolved = cardsInvolved;
+        playerHighCard = highCard;
         document.getElementById(playersDetails[iteration]).innerHTML = handHeirarchy[resultList[Number(iteration)]] + "  " + cardsInvolved + " <small><i>(" + highCard + " is your highest card)</i></small>";
     } else {
 
@@ -233,78 +235,55 @@ function evaluateHand(iteration) {
         if (resultList[0] > resultList[1]) {
             topHand = 0;
 
-            let winnings = 0;
-            if (replaceAttempts === 0) {
-                winnings = bet;
 
-            } else {
-                winnings = (bet / replaceAttempts);
-                console.log("bet / replaceAttempts: " + bet / replaceAttempts);
-            }
-            showAlert("alert-success", "You won $" + winnings + " with " + handHeirarchy[resultList[Number(iteration)]] + "  " + cardsInvolved + " <small><i>(" + highCard + " is your highest card)</i></small>");
+            showAlert("alert-success", "You won $" + bet + " with " + handHeirarchy[resultList[0]] + "  " + playerCardsInvolved + " <small><i>(" + playerHighCard + " is your highest card)</i></small>");
 
-            if (replaceAttempts === 0) {
-                playerMoney = playerMoney + bet;
 
-            } else {
-                playerMoney = playerMoney + (bet / replaceAttempts);
-                console.log("bet / replaceAttempts: " + bet / replaceAttempts);
-            }
-            playerMoney = playerMoney + winnings
+            playerMoney = playerMoney + bet;
             setPlayerMoney(playerMoney);
-        } else {
-            // showAlert("alert-danger", "You lost.");
         }
         if (resultList[0] === resultList[1]) {
-            let winnings = 0;
-            if (replaceAttempts === 0) {
-                winnings = bet;
-
-            } else {
-                winnings = (bet / replaceAttempts);
-                console.log("bet / replaceAttempts: " + bet / replaceAttempts);
+            if (compareCards[0] === compareCards[1]) {
+                showAlert("alert-danger", "It's a draw so far. Replace some cards.");
             }
             if (compareCards[0] > compareCards[1]) {
                 document.querySelector("[data-player='0']").classList.remove("alert-info");
                 document.querySelector("[data-player='0']").classList.add("alert-success");
-                showAlert("alert-success", "You won $" + winnings + " with " + handHeirarchy[resultList[Number(iteration)]] + "  " + cardsInvolved + " <small><i>(" + highCard + " is your highest card)</i></small>");
-
-
-                if (replaceAttempts === 0) {
-                    playerMoney = playerMoney + bet;
-
-                } else {
-                    playerMoney = playerMoney + (bet / replaceAttempts);
-                    console.log("bet / replaceAttempts: " + bet / replaceAttempts);
-                }
-                playerMoney = playerMoney + winnings
+                playerMoney = playerMoney + bet;
                 setPlayerMoney(playerMoney);
-            } else {
+                showAlert("alert-success", "You won $" + bet + " with " + handHeirarchy[resultList[0]] + "  " + playerCardsInvolved + " <small><i>(" + playerHighCard + " is your highest card)</i></small>");
+
+
+            }
+            if (compareCards[0] < compareCards[1]) {
                 document.querySelector("[data-player='1']").classList.remove("alert-info");
                 document.querySelector("[data-player='1']").classList.add("alert-success");
-                // showAlert("alert-danger", "You lost.");
+                playerMoney = playerMoney - bet;
+                setPlayerMoney(playerMoney);
+                showAlert("alert-danger", "You're down. Replace some cards.");
             }
         } else {
             document.querySelector("[data-player='" + topHand + "']").classList.remove("alert-info");
             document.querySelector("[data-player='" + topHand + "']").classList.add("alert-success");
+            if (topHand === 1) {
+                showAlert("alert-danger", "You're down. Replace some cards.");
+            }
         }
-        console.log("resultList: " + resultList);
-        if (!document.querySelector("button[data-replace]")) {
+        if (!document.querySelector("span[data-replace]") && topHand !== 0) {
             showAlert("alert-danger", "All out of chances. You lost $" + bet);
             playerMoney = playerMoney - bet;
             setPlayerMoney(playerMoney)
+        } else if (!document.querySelector("span[data-replace]") && topHand === 0) {
+            showAlert("alert-success", "You just barely won $" + bet);
+            playerMoney = playerMoney + bet;
+            setPlayerMoney(playerMoney)
         }
-
     }
 }
-
-
 
 function generate(activeCards) {
     return Math.floor(Math.random() * activeCards.length);
 }
-
-
 
 function play(playerBet) {
     document.getElementById("playerHandDetails").classList.add("hide");
@@ -312,13 +291,8 @@ function play(playerBet) {
     document.getElementById("playerTwoCards").innerHTML = "";
     document.getElementById("playerCards").innerHTML = "";
     document.getElementById("status").classList.add("hide");
-
-
-
     bet = playerBet;
-    document.getElementById("betTarget").innerHTML = "$" + bet;
-    // document.getElementById("playerHandDetails").classList.remove("hide");
-    // document.getElementById("playerTwoHandDetails").classList.remove("hide");
+    document.getElementById("betTarget").innerHTML = "Bet $" + bet;
     [].forEach.call(document.querySelectorAll(".alert[data-player]"), function (e) {
         e.classList.add("alert-info");
         e.classList.remove("alert-success");
@@ -340,8 +314,8 @@ function play(playerBet) {
                     playerCardsHTML = playerCardsHTML + "<div class='card " + activeCards[genNumber].title + "' ></div>";
                 } else {
 
-                    playerCardsHTML = playerCardsHTML + `<div ><ul class='list-unstyled'><li><div class='card ${activeCards[genNumber].title}' ></div></li><li><button class='btn btn-outline-info' data-replace='${playersCards.length}'
-                     onClick='javascript:replace("${activeCards[genNumber].title}",${Number(playersCards.length)})'>Replace</button></li></ul></div>`;
+                    playerCardsHTML = playerCardsHTML + `<div class='card ${activeCards[genNumber].title}' ><span class='badge text-bg-primary pointer' data-replace='${playersCards.length}'
+                    onClick='javascript:replace("${activeCards[genNumber].title}",${Number(playersCards.length)})'>Replace</span></div>`;
                 }
 
                 playersCards.push(cards[genNumber].title);
@@ -370,26 +344,17 @@ function play(playerBet) {
 }
 
 
-
-
-
-
-
-
 function replace(cardTitle, cardNum) {
+    let playerCardsInvolved = "";
+    let playerHighCard = "";
     replaceAttempts = replaceAttempts + 1;
-    // resetCompare();
-    document.querySelector("button[data-replace='" + cardNum + "']").remove();
+    document.querySelector("span[data-replace='" + cardNum + "']").remove();
     document.getElementById("playerHandDetails").classList.remove("alert-success");
     document.getElementById("playerHandDetails").classList.add("alert-info");
-
-
     activeRound = 2;
-    // cardReplacements.push(cardTitle);
     let tempHand = player0Obj;
     let availableCards = [];
     let playerCardsHTML = "";
-
 
     const allCards = JSON.parse(localStorage.getItem("completeCards"));
     for (let i = 0; i < allCards.length; i++) {
@@ -400,7 +365,6 @@ function replace(cardTitle, cardNum) {
     const newNum = generate(availableCards);
 
     for (let i = 0; i < tempHand.length; i++) {
-
         if (tempHand[i].value + "-" + tempHand[i].suit === cardTitle) {
 
             tempHand[i] = {
@@ -411,29 +375,16 @@ function replace(cardTitle, cardNum) {
             document.querySelector("." + cardTitle).classList.add(availableCards[newNum]);
             document.querySelector("." + cardTitle).classList.remove(cardTitle);
         }
-
-        //  playerCardsHTML = playerCardsHTML + "<div class='card " + tempHand[i].value + "-" + tempHand[i].suit + "' ></div>";
     }
     let tempAvailable = [];
     for (let i = 0; i < availableCards.length; i++) {
         if (i !== Number(newNum)) {
             tempAvailable.push(availableCards[i]);
         }
-
     }
     availableCards = tempAvailable;
-    // console.log("JSON.stringify(tempHand): " + JSON.stringify(tempHand));
-    //console.log("usedCardsArr: " + usedCardsArr);
-    // console.log("availableCards: " + availableCards);
-
-    //  console.log("playerCardsHTML: " + playerCardsHTML);
-
     evaluateHand(0);
-
     player0Obj = tempHand;
-
-    // evaluateHand( 0);
-    //  document.getElementById("playerCards").innerHTML = playerCardsHTML;
 }
 
 
