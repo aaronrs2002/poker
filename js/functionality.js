@@ -57,14 +57,11 @@ function showAlert(status, message) {
 }
 
 function evaluateHand(iteration) {
-
     if (replaceAttempts === 0) {/*trying to fix a bug that keeps these hiiden*/
         [].forEach.call(document.querySelectorAll("span.badge[data-replace]"), function (e) {
             e.classList.remove("hide");
         });
-        console.log("unhide the badge");
     }
-
     bestHandIndex = 0;
     let cardsInvolved = "";
     let cardIndexes = [];
@@ -91,7 +88,6 @@ function evaluateHand(iteration) {
     let queen = 0;
     let king = 0;
     let ace = 0;
-
     for (let i = 0; i < cardsArr.length; i++) {
         cardIndexes.push(cardHeirarchy.indexOf(cardsArr[i].value))
         if (cardsArr[i].value === "two") {
@@ -251,7 +247,6 @@ function evaluateHand(iteration) {
         let topHand = 1;
         if (resultList[0] > resultList[1]) {
             topHand = 0;
-
             showAlert("alert-success", "You won $" + bet + " with " + handHeirarchy[resultList[0]] + "  " + playerCardsInvolved + " <small><i>(" + playerHighCard + " is your highest card)</i></small>");
         }
         if (resultList[0] === resultList[1]) {
@@ -276,9 +271,6 @@ function evaluateHand(iteration) {
                 showAlert("alert-danger", "You're down. Replace some cards.");
             }
         }
-
-        console.log("replaceAttempts: " + replaceAttempts);
-
         if (replaceAttempts === 5 && topHand !== 0) {
             playerMoney = playerMoney - bet;
             setPlayerMoney(playerMoney)
