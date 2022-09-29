@@ -311,7 +311,7 @@ function play(playerBet) {
                 if (iteration !== 0) {
                     playerCardsHTML = playerCardsHTML + "<div class='card " + activeCards[genNumber].title + "' ></div>";
                 } else {
-                    playerCardsHTML = playerCardsHTML + `<div class='card ${activeCards[genNumber].title}' ><span class='badge text-bg-primary pointer' data-replace='${playersCards.length}'
+                    playerCardsHTML = playerCardsHTML + `<div class='card ${activeCards[genNumber].title}' ><span class='badge text-bg-primary pointer d-flex justify-content-center' data-replace='${playersCards.length}'
                     onClick='javascript:replace("${activeCards[genNumber].title}",${Number(playersCards.length)})'>Replace</span></div>`;
                 }
                 playersCards.push(cards[genNumber].title);
