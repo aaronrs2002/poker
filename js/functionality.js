@@ -248,9 +248,6 @@ function evaluateHand(iteration) {
         }
         if (resultList[0] === resultList[1]) {
             if (compareCards[0] === compareCards[1]) {
-                [].forEach.call(document.querySelectorAll("span[data-replace]"), function (e) {
-                    e.classList.remove("hide");
-                });
                 showAlert("alert-danger", "It's a draw so far. Replace some cards.");
             }
             if (compareCards[0] > compareCards[1]) {
@@ -260,9 +257,6 @@ function evaluateHand(iteration) {
                 showAlert("alert-success", "You won $" + bet + " with " + handHeirarchy[resultList[0]] + "  " + playerCardsInvolved + " <small><i>(" + playerHighCard + " is your highest card)</i></small>");
             }
             if (compareCards[0] < compareCards[1]) {
-                [].forEach.call(document.querySelectorAll("span[data-replace]"), function (e) {
-                    e.classList.remove("hide");
-                });
                 document.querySelector("[data-player='1']").classList.remove("alert-info");
                 document.querySelector("[data-player='1']").classList.add("alert-success");
                 showAlert("alert-danger", "You're down. Replace some cards.");
@@ -290,6 +284,9 @@ function generate(activeCards) {
     return Math.floor(Math.random() * activeCards.length);
 }
 function play(playerBet) {
+    [].forEach.call(document.querySelectorAll("span[data-replace]"), function (e) {
+        e.classList.remove("hide");
+    });
     replaceAttempts = 0;
     betPaid = false;
     [].forEach.call(document.querySelectorAll('.dealAmt'), function (e) {
