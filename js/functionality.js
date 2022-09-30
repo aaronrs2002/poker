@@ -270,14 +270,14 @@ function evaluateHand(iteration) {
             e.classList.add("alert-info");
             e.classList.remove("alert-success");
         });
-        if (topHand === 0 && iteration === 2) {
+        if (topHand === 0) {
             showAlert("alert-success", "You won $" + bet + " with " + handHeirarchy[resultList[0]] + "  " + playerCardsInvolved + " <small><i>(" + playerHighCard + " is your highest card)</i></small>");
         }
         if (resultList[0] === resultList[1] || resultList[0] === resultList[2]) {
             if (compareCards[0] === compareCards[1] || compareCards[0] === compareCards[2]) {
                 showAlert("alert-danger", "It's a draw so far. Replace some cards.");
             }
-            if (topHand === 0 && iteration === 2) {
+            if (topHand === 0) {
                 document.querySelector("[data-player='0']").classList.remove("alert-info");
                 document.querySelector("[data-player='0']").classList.add("alert-success");
 
