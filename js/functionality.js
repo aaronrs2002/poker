@@ -39,8 +39,8 @@ function showAlert(status, message, player) {
     if (replaceAttempts === 5 && message.indexOf("All out of chances.") !== -1) {
         enablePlayBts();
     }
-    console.log("document.querySelector('#playerHandDetails.alert-success'): " + document.querySelector("#playerHandDetails.alert-success"));
-    if (status === "alert-success" && document.querySelector("#status.alert-success") !== null) {
+    console.log("message.indexOf('You won $'): " + message.indexOf("You won $"));
+    if (status === "alert-success" && message.indexOf("You won $") !== -1) {
         if (betPaid === false) {
             playerMoney = playerMoney + bet;
             setPlayerMoney(playerMoney);
@@ -56,7 +56,7 @@ function showAlert(status, message, player) {
     document.getElementById("status").classList.remove("hide");
     document.getElementById("status").classList.add(status);
     document.getElementById("message").innerHTML = message;
-    // return false;
+    //return false;
 }
 
 function evaluateHand(iteration) {
@@ -271,22 +271,21 @@ function evaluateHand(iteration) {
             e.classList.remove("alert-success");
         });
         if (topHand === 0) {
+            document.querySelector("[data-player='" + topHand + "']").classList.remove("alert-info");
+            document.querySelector("[data-player='" + topHand + "']").classList.add("alert-success");
             showAlert("alert-success", "You won $" + bet + " with " + handHeirarchy[resultList[0]] + "  " + playerCardsInvolved + " <small><i>(" + playerHighCard + " is your highest card)</i></small>", iteration);
         }
         if (resultList[0] === resultList[1] || resultList[0] === resultList[2]) {
             if (compareCards[0] === compareCards[1] || compareCards[0] === compareCards[2]) {
                 showAlert("alert-danger", "It's a draw so far. Replace some cards.", iteration);
             }
-            if (topHand === 0) {
-                document.querySelector("[data-player='0']").classList.remove("alert-info", iteration);
-                document.querySelector("[data-player='0']").classList.add("alert-success", iteration);
 
-                showAlert("alert-success", "You won $" + bet + " with " + handHeirarchy[resultList[0]] + "  " + playerCardsInvolved + " <small><i>(" + playerHighCard + " is your highest card)</i></small>", iteration);
-            }
             if (topHand !== 0) {
                 document.querySelector("[data-player='" + topHand + "']").classList.remove("alert-info");
                 document.querySelector("[data-player='" + topHand + "']").classList.add("alert-success");
                 showAlert("alert-danger", "You're down. Replace some cards.", iteration);
+            } else {
+                showAlert("alert-success", "You won $" + bet + " with " + handHeirarchy[resultList[0]] + "  " + playerCardsInvolved + " <small><i>(" + playerHighCard + " is your highest card)</i></small>", iteration);
             }
         } else {
             document.querySelector("[data-player='" + topHand + "']").classList.remove("alert-info");
@@ -295,6 +294,7 @@ function evaluateHand(iteration) {
                 showAlert("alert-danger", "You're down. Replace some cards.", iteration);
             }
         }
+
         if (replaceAttempts === 5 && topHand !== 0) {
             playerMoney = playerMoney - bet;
             setPlayerMoney(playerMoney)
