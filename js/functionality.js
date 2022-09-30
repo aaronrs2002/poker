@@ -13,6 +13,7 @@ let compareCards = [0, 0, 0];
 let replaceAttempts = 0;
 let playerCardsInvolved = "";
 let playerHighCard = "";
+let currentWinner;
 /*DOES NOT RESET AT DEAL*/
 let betPaid = false;
 let playerMoney = 500;
@@ -29,7 +30,7 @@ function setPlayerMoney(passPlayerMoney) {
     localStorage.setItem("balance", passPlayerMoney);
 }
 
-function showAlert(status, message) {
+function showAlert(status, message, player) {
     function enablePlayBts() {
         [].forEach.call(document.querySelectorAll('.dealAmt'), function (e) {
             e.disabled = false;
@@ -38,9 +39,8 @@ function showAlert(status, message) {
     if (replaceAttempts === 5 && message.indexOf("All out of chances.") !== -1) {
         enablePlayBts();
     }
-
-    if (status === "alert-success") {
-        console.log("status: " + status);
+    console.log("document.querySelector('#playerHandDetails.alert-success'): " + document.querySelector("#playerHandDetails.alert-success"));
+    if (status === "alert-success" && document.querySelector("#status.alert-success") !== null) {
         if (betPaid === false) {
             playerMoney = playerMoney + bet;
             setPlayerMoney(playerMoney);
@@ -51,7 +51,6 @@ function showAlert(status, message) {
             e.classList.add("hide");
         });
     }
-
     document.getElementById("status").classList.remove("alert-success");
     document.getElementById("status").classList.remove("alert-danger");
     document.getElementById("status").classList.remove("hide");
@@ -254,7 +253,7 @@ function evaluateHand(iteration) {
         if (getOccurrence(resultList, winningHand) > 1) {
             let winningCard = Math.max(...compareCards);
             if (getOccurrence(compareCards, winningCard) > 1) {
-                showAlert("alert-danger", "It's a draw so far. Replace some cards.");
+                showAlert("alert-danger", "It's a draw so far. Replace some cards.", iteration);
             } else {
                 let tempWinners = [];
                 for (let i = 0; i < resultList.length; i++) {
@@ -266,41 +265,42 @@ function evaluateHand(iteration) {
                 topHand = compareCards.indexOf(winningCard)
             }
         }
+        currentWinner = topHand;
         [].forEach.call(document.querySelectorAll(".alert[data-player]"), function (e) {
             e.classList.add("alert-info");
             e.classList.remove("alert-success");
         });
         if (topHand === 0) {
-            showAlert("alert-success", "You won $" + bet + " with " + handHeirarchy[resultList[0]] + "  " + playerCardsInvolved + " <small><i>(" + playerHighCard + " is your highest card)</i></small>");
+            showAlert("alert-success", "You won $" + bet + " with " + handHeirarchy[resultList[0]] + "  " + playerCardsInvolved + " <small><i>(" + playerHighCard + " is your highest card)</i></small>", iteration);
         }
         if (resultList[0] === resultList[1] || resultList[0] === resultList[2]) {
             if (compareCards[0] === compareCards[1] || compareCards[0] === compareCards[2]) {
-                showAlert("alert-danger", "It's a draw so far. Replace some cards.");
+                showAlert("alert-danger", "It's a draw so far. Replace some cards.", iteration);
             }
             if (topHand === 0) {
-                document.querySelector("[data-player='0']").classList.remove("alert-info");
-                document.querySelector("[data-player='0']").classList.add("alert-success");
+                document.querySelector("[data-player='0']").classList.remove("alert-info", iteration);
+                document.querySelector("[data-player='0']").classList.add("alert-success", iteration);
 
-                showAlert("alert-success", "You won $" + bet + " with " + handHeirarchy[resultList[0]] + "  " + playerCardsInvolved + " <small><i>(" + playerHighCard + " is your highest card)</i></small>");
+                showAlert("alert-success", "You won $" + bet + " with " + handHeirarchy[resultList[0]] + "  " + playerCardsInvolved + " <small><i>(" + playerHighCard + " is your highest card)</i></small>", iteration);
             }
             if (topHand !== 0) {
                 document.querySelector("[data-player='" + topHand + "']").classList.remove("alert-info");
                 document.querySelector("[data-player='" + topHand + "']").classList.add("alert-success");
-                showAlert("alert-danger", "You're down. Replace some cards.");
+                showAlert("alert-danger", "You're down. Replace some cards.", iteration);
             }
         } else {
             document.querySelector("[data-player='" + topHand + "']").classList.remove("alert-info");
             document.querySelector("[data-player='" + topHand + "']").classList.add("alert-success");
             if (topHand !== 0) {
-                showAlert("alert-danger", "You're down. Replace some cards.");
+                showAlert("alert-danger", "You're down. Replace some cards.", iteration);
             }
         }
         if (replaceAttempts === 5 && topHand !== 0) {
             playerMoney = playerMoney - bet;
             setPlayerMoney(playerMoney)
-            showAlert("alert-danger", "All out of chances. You lost $" + bet);
+            showAlert("alert-danger", "All out of chances. You lost $" + bet, iteration);
         } else if (replaceAttempts === 5 && topHand === 0) {
-            showAlert("alert-success", "You just barely won $" + bet);
+            showAlert("alert-success", "You just barely won $" + bet, iteration);
         }
     }
 }
