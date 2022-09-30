@@ -14,6 +14,9 @@ let replaceAttempts = 0;
 let playerCardsInvolved = "";
 let playerHighCard = "";
 let currentWinner;
+
+
+let eggTimer = 0;
 /*DOES NOT RESET AT DEAL*/
 let betPaid = false;
 let playerMoney = 500;
@@ -39,10 +42,13 @@ function showAlert(status, message, player) {
     if (replaceAttempts === 5 && message.indexOf("All out of chances.") !== -1) {
         enablePlayBts();
     }
-    console.log("message.indexOf('You won $'): " + message.indexOf("You won $"));
-    if (status === "alert-success" && message.indexOf("You won $") !== -1) {
+
+    if (message.indexOf("You won $") !== -1 && activeRound >= 2) {
+        console.log("message.indexOf('You won $'): " + message.indexOf("You won $") + " you Won. ADD MONEY. activeRound: " + activeRound);
         if (betPaid === false) {
             playerMoney = playerMoney + bet;
+            eggTimer = eggTimer + 1;
+            console.log("eggTimer: " + eggTimer);
             setPlayerMoney(playerMoney);
             betPaid = true;
         }
@@ -50,13 +56,15 @@ function showAlert(status, message, player) {
         [].forEach.call(document.querySelectorAll(".card span.badge"), function (e) {
             e.classList.add("hide");
         });
+    } else {
+        console.log("message.indexOf('You won $'): " + message.indexOf("You won $") + " you lost. No adding money. - activeRound: " + activeRound);
     }
     document.getElementById("status").classList.remove("alert-success");
     document.getElementById("status").classList.remove("alert-danger");
     document.getElementById("status").classList.remove("hide");
     document.getElementById("status").classList.add(status);
     document.getElementById("message").innerHTML = message;
-    //return false;
+    return false;
 }
 
 function evaluateHand(iteration) {
@@ -310,6 +318,7 @@ function generate(activeCards) {
 }
 function play(playerBet) {
     replaceAttempts = 0;
+    eggTimer = 0;
     betPaid = false;
     [].forEach.call(document.querySelectorAll('.dealAmt'), function (e) {
         e.disabled = true;
