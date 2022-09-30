@@ -270,7 +270,7 @@ function evaluateHand(iteration) {
             e.classList.add("alert-info");
             e.classList.remove("alert-success");
         });
-        if (topHand === 0) {
+        if (topHand === 0 && iteration === 2) {
             showAlert("alert-success", "You won $" + bet + " with " + handHeirarchy[resultList[0]] + "  " + playerCardsInvolved + " <small><i>(" + playerHighCard + " is your highest card)</i></small>");
         }
         if (resultList[0] === resultList[1] || resultList[0] === resultList[2]) {
