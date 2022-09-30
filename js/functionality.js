@@ -295,11 +295,21 @@ function evaluateHand(iteration) {
         });
 
         if (topHand === 0) {
-            document.querySelector("[data-player='" + topHand + "']").classList.remove("alert-info");
-            document.querySelector("[data-player='" + topHand + "']").classList.add("alert-success");
-            showAlert("alert-success", "You won $" + bet + " with " + handHeirarchy[resultList[0]] + "  " + playerCardsInvolved + " <small><i>(" + playerHighCard + " is your highest card)</i></small>", iteration);
-            console.log("TOP showAlert just ran");
-            return false;
+            if (activeRound === 1 && countingIterations === 2) {
+                document.querySelector("[data-player='" + topHand + "']").classList.remove("alert-info");
+                document.querySelector("[data-player='" + topHand + "']").classList.add("alert-success");
+                showAlert("alert-success", "You won $" + bet + " with " + handHeirarchy[resultList[0]] + "  " + playerCardsInvolved + " <small><i>(" + playerHighCard + " is your highest card)</i></small>", iteration);
+                console.log("TOP showAlert just ran from active Round 1");
+                return false;
+            }
+            if (activeRound === 2) {
+                document.querySelector("[data-player='" + topHand + "']").classList.remove("alert-info");
+                document.querySelector("[data-player='" + topHand + "']").classList.add("alert-success");
+                showAlert("alert-success", "You won $" + bet + " with " + handHeirarchy[resultList[0]] + "  " + playerCardsInvolved + " <small><i>(" + playerHighCard + " is your highest card)</i></small>", iteration);
+                console.log("TOP showAlert just ran from active Round 1");
+                return false;
+            }
+
         }
         if (resultList[0] === resultList[1] || resultList[0] === resultList[2]) {
             if (compareCards[0] === compareCards[1] || compareCards[0] === compareCards[2]) {
@@ -328,7 +338,10 @@ function evaluateHand(iteration) {
             setPlayerMoney(playerMoney)
             showAlert("alert-danger", "All out of chances. You lost $" + bet, iteration);
         } else if (replaceAttempts === 5 && topHand === 0) {
-            showAlert("alert-success", "You just barely won $" + bet, iteration);
+            if (activeRound === 2) {
+                showAlert("alert-success", "You just barely won $" + bet, iteration);
+            }
+
         }
     }
 
@@ -338,6 +351,7 @@ function generate(activeCards) {
     return Math.floor(Math.random() * activeCards.length);
 }
 function play(playerBet) {
+    activeRound = 1;
     countingIterations = 0;
     replaceAttempts = 0;
     betPaid = false;
