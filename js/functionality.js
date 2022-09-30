@@ -283,6 +283,7 @@ function evaluateHand(iteration) {
             document.querySelector("[data-player='" + topHand + "']").classList.remove("alert-info");
             document.querySelector("[data-player='" + topHand + "']").classList.add("alert-success");
             showAlert("alert-success", "You won $" + bet + " with " + handHeirarchy[resultList[0]] + "  " + playerCardsInvolved + " <small><i>(" + playerHighCard + " is your highest card)</i></small>", iteration);
+            return false;
         }
         if (resultList[0] === resultList[1] || resultList[0] === resultList[2]) {
             if (compareCards[0] === compareCards[1] || compareCards[0] === compareCards[2]) {
@@ -295,6 +296,7 @@ function evaluateHand(iteration) {
                 showAlert("alert-danger", "You're down. Replace some cards.", iteration);
             } else if (topHand === 0) {
                 showAlert("alert-success", "You won $" + bet + " with " + handHeirarchy[resultList[0]] + "  " + playerCardsInvolved + " <small><i>(" + playerHighCard + " is your highest card)</i></small>", iteration);
+                return false;
             }
         } else {
             document.querySelector("[data-player='" + topHand + "']").classList.remove("alert-info");
