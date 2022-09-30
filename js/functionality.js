@@ -44,6 +44,7 @@ function showAlert(status, message, player) {
         console.log("message.indexOf('You won $'): " + message.indexOf("You won $") + " you Won. ADD MONEY. ");
         if (betPaid === false) {
             playerMoney = playerMoney + bet;
+            message = "Way to go!";
             setPlayerMoney(playerMoney);
             betPaid = true;
         }
