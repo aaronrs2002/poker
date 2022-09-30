@@ -40,6 +40,7 @@ function showAlert(status, message) {
     }
 
     if (status === "alert-success") {
+        console.log("status: " + status);
         if (betPaid === false) {
             playerMoney = playerMoney + bet;
             setPlayerMoney(playerMoney);
@@ -276,7 +277,7 @@ function evaluateHand(iteration) {
             if (compareCards[0] === compareCards[1] || compareCards[0] === compareCards[2]) {
                 showAlert("alert-danger", "It's a draw so far. Replace some cards.");
             }
-            if (topHand === 0) {
+            if (topHand === 0 && iteration === 2) {
                 document.querySelector("[data-player='0']").classList.remove("alert-info");
                 document.querySelector("[data-player='0']").classList.add("alert-success");
 
