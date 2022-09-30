@@ -13,7 +13,11 @@ let compareCards = [0, 0, 0];
 let replaceAttempts = 0;
 let playerCardsInvolved = "";
 let playerHighCard = "";
-let currentWinner;
+
+
+let countingIterations = 0;
+
+
 /*DOES NOT RESET AT DEAL*/
 let betPaid = false;
 let playerMoney = 500;
@@ -40,11 +44,24 @@ function showAlert(status, message, player) {
         enablePlayBts();
     }
 
+
     if (message.indexOf("You won $") !== -1) {
-        console.log("message.indexOf('You won $'): " + message.indexOf("You won $") + " you Won. ADD MONEY. ");
+        console.log("message.indexOf('You won $'): " + message.indexOf("You won $") + " you Won. ADD MONEY. balance: " + playerMoney);
         if (betPaid === false) {
-            playerMoney = playerMoney + bet;
-            message = "Way to go!";
+
+
+            if (activeRound === 1 && countingIterations === 2) {
+                playerMoney = playerMoney + bet;
+                console.log("Won at the BEGINNING");
+
+            }
+
+
+            if (activeRound === 2) {
+                playerMoney = playerMoney + bet;
+                console.log("Won at the END");
+            }
+
             setPlayerMoney(playerMoney);
             betPaid = true;
         }
@@ -53,7 +70,7 @@ function showAlert(status, message, player) {
             e.classList.add("hide");
         });
     } else {
-        console.log("message.indexOf('You won $'): " + message.indexOf("You won $") + " you lost. No adding money.");
+        console.log("message.indexOf('You won $'): " + message.indexOf("You won $") + " you lost. No adding money. balance: " + playerMoney);
     }
     document.getElementById("status").classList.remove("alert-success");
     document.getElementById("status").classList.remove("alert-danger");
@@ -61,9 +78,12 @@ function showAlert(status, message, player) {
     document.getElementById("status").classList.add(status);
     document.getElementById("message").innerHTML = message;
     return false;
+
 }
 
 function evaluateHand(iteration) {
+    countingIterations = iteration;
+    console.log("countingIterations from evaluateHand(): " + countingIterations + " - activeRound: " + activeRound);
     if (replaceAttempts === 0) {/*trying to fix a bug that keeps these hiiden*/
         [].forEach.call(document.querySelectorAll("span.badge[data-replace]"), function (e) {
             e.classList.remove("hide");
@@ -269,20 +289,16 @@ function evaluateHand(iteration) {
                 topHand = compareCards.indexOf(winningCard)
             }
         }
-        currentWinner = topHand;
         [].forEach.call(document.querySelectorAll(".alert[data-player]"), function (e) {
             e.classList.add("alert-info");
             e.classList.remove("alert-success");
         });
 
-
-
-
-
         if (topHand === 0) {
             document.querySelector("[data-player='" + topHand + "']").classList.remove("alert-info");
             document.querySelector("[data-player='" + topHand + "']").classList.add("alert-success");
             showAlert("alert-success", "You won $" + bet + " with " + handHeirarchy[resultList[0]] + "  " + playerCardsInvolved + " <small><i>(" + playerHighCard + " is your highest card)</i></small>", iteration);
+            console.log("TOP showAlert just ran");
             return false;
         }
         if (resultList[0] === resultList[1] || resultList[0] === resultList[2]) {
@@ -296,6 +312,7 @@ function evaluateHand(iteration) {
                 showAlert("alert-danger", "You're down. Replace some cards.", iteration);
             } else if (topHand === 0) {
                 showAlert("alert-success", "You won $" + bet + " with " + handHeirarchy[resultList[0]] + "  " + playerCardsInvolved + " <small><i>(" + playerHighCard + " is your highest card)</i></small>", iteration);
+                console.log("TOP showAlert just ran");
                 return false;
             }
         } else {
@@ -321,6 +338,7 @@ function generate(activeCards) {
     return Math.floor(Math.random() * activeCards.length);
 }
 function play(playerBet) {
+    countingIterations = 0;
     replaceAttempts = 0;
     betPaid = false;
     [].forEach.call(document.querySelectorAll('.dealAmt'), function (e) {
