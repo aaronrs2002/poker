@@ -69,8 +69,6 @@ function showAlert(status, message, player) {
         [].forEach.call(document.querySelectorAll(".card span.badge"), function (e) {
             e.classList.add("hide");
         });
-    } else {
-        console.log("message.indexOf('You won $'): " + message.indexOf("You won $") + " you lost. No adding money. balance: " + playerMoney);
     }
     document.getElementById("status").classList.remove("alert-success");
     document.getElementById("status").classList.remove("alert-danger");
@@ -83,7 +81,6 @@ function showAlert(status, message, player) {
 
 function evaluateHand(iteration) {
     countingIterations = iteration;
-    console.log("countingIterations from evaluateHand(): " + countingIterations + " - activeRound: " + activeRound);
     if (replaceAttempts === 0) {/*trying to fix a bug that keeps these hiiden*/
         [].forEach.call(document.querySelectorAll("span.badge[data-replace]"), function (e) {
             e.classList.remove("hide");
@@ -97,7 +94,6 @@ function evaluateHand(iteration) {
     let highCard;
     let flush = false;
     let straight = false;
-    let hasAce = false;
     let spades = 0;
     let hearts = 0;
     let diamonds = 0;
@@ -154,7 +150,6 @@ function evaluateHand(iteration) {
             king = king + 1;
         }
         if (cardsArr[i].value === "ace") {
-            hasAce = true;
             ace = ace + 1;
         }
         if (cardsArr[i].suit === "spades") {  /*determine same suits*/
@@ -246,7 +241,7 @@ function evaluateHand(iteration) {
             bestHandIndex = 8;
         }
     }
-    if (flush === true && straight === true && hasAce == true) {  /*checking for royal flush*/
+    if (flush === true && straight === true && valueArr[Number(valueArr.length) - 1] > 0) {  /*checking for royal flush (valueArr[Number(valueArr.length) - 1] is an ace)*/
         if (bestHandIndex < 9) {
             bestHandIndex = 9;
         }
@@ -254,12 +249,17 @@ function evaluateHand(iteration) {
     resultList[Number(iteration)] = bestHandIndex;
     const playersDetails = ["playerHandDetails", "playerTwoHandDetails", "playerThreeHandDetails"];
     document.getElementById(playersDetails[iteration]).classList.remove("hide");
+    let HighCardMessage = "";
+    if (handHeirarchy[resultList[Number(iteration)]] === "high-card") {
+        HighCardMessage = " <small><i>(" + highCard + " is your highest card)</i></small>";
+    }
     if (iteration === 0) {
         playerCardsInvolved = cardsInvolved;
         playerHighCard = highCard;
-        document.getElementById(playersDetails[iteration]).innerHTML = "You have: " + handHeirarchy[resultList[Number(iteration)]] + "  " + cardsInvolved + " <small><i>(" + highCard + " is your highest card)</i></small>";
+
+        document.getElementById(playersDetails[iteration]).innerHTML = "You have: " + handHeirarchy[resultList[Number(iteration)]] + "  " + cardsInvolved + HighCardMessage;
     } else {
-        document.getElementById(playersDetails[iteration]).innerHTML = "<i class='fas fa-user'></i> " + handHeirarchy[resultList[Number(iteration)]] + "  " + cardsInvolved + " <small><i>(" + highCard + " is player " + (Number(iteration) + 1) + "'s highest card)</i></small>";
+        document.getElementById(playersDetails[iteration]).innerHTML = "<i class='fas fa-user'></i> " + handHeirarchy[resultList[Number(iteration)]] + "  " + cardsInvolved + HighCardMessage;
     }
     document.getElementById(playersDetails[iteration]).classList.remove("hide");
     if (iteration === 0) {
