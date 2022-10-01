@@ -367,11 +367,13 @@ function evaluateHand(iteration) {
 
 function fold() {
     playerMoney = playerMoney - bet;
+    setPlayerMoney(playerMoney);
+    bet = Math.round(bet);
     [].forEach.call(document.querySelectorAll('.dealAmt'), function (e) {
         e.disabled = false;
     });
+    showAlert("alert-danger", "Folded. You lost $" + bet, 0);
 
-    setPlayerMoney(playerMoney);
     document.getElementById("betTarget").innerHTML = "Place your bet.";
     document.getElementById("status").classList.add("hide");
     window.location = "#";
