@@ -2,14 +2,28 @@ localStorage.setItem("completeCards", JSON.stringify(cards));
 const handHeirarchy = ["high-card", "pair", "two-pairs", "three-of-a-kind", "straight", "flush", "full-house", "four-of-a-kind", "straight-flush", "royal-flush"];
 const cardHeirarchy = ["two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "jack", "queen", "king", "ace"];
 const suitArr = ["diamonds", "hearts", "clubs", "spades"];
+let numberOfOpponents = document.getElementById("howManyopponents").value;
+
+if (localStorage.getItem("numberOfOpponents")) {
+    numberOfPlayers = localStorage.getItem("numberOfOpponents");
+    document.getElementById("howManyopponents").value = localStorage.getItem("numberOfOpponents");
+
+}
+function setOpponentNumber() {
+    numberOfOpponents = document.getElementById("howManyopponents").value;
+    localStorage.setItem("numberOfOpponents", document.getElementById("howManyopponents").value);
+}
+
+
 let usedCardsArr = [];
 let player0Obj;
 let player1Obj;
 let player2Obj;
+let player3Obj;
 let activeRound = 1;
 let bestHandIndex = 0;
-let resultList = [0, 0, 0];
-let compareCards = [0, 0, 0];
+let resultList = [0, 0, 0, 0];
+let compareCards = [0, 0, 0, 0];
 let replaceAttempts = 0;
 let playerCardsInvolved = "";
 let playerHighCard = "";
@@ -50,7 +64,7 @@ function showAlert(status, message, player) {
         if (betPaid === false) {
 
 
-            if (activeRound === 1 && countingIterations === 2) {
+            if (activeRound === 1 && countingIterations === 3) {
                 playerMoney = playerMoney + bet;
                 console.log("Won at the BEGINNING");
 
@@ -89,7 +103,7 @@ function evaluateHand(iteration) {
     bestHandIndex = 0;
     let cardsInvolved = "";
     let cardIndexes = [];
-    const playersHands = [player0Obj, player1Obj, player2Obj]
+    const playersHands = [player0Obj, player1Obj, player2Obj, player3Obj]
     const cardsArr = [playersHands[iteration][0], playersHands[iteration][1], playersHands[iteration][2], playersHands[iteration][3], playersHands[iteration][4]];
     let highCard;
     let flush = false;
@@ -247,11 +261,11 @@ function evaluateHand(iteration) {
         }
     }
     resultList[Number(iteration)] = bestHandIndex;
-    const playersDetails = ["playerHandDetails", "playerTwoHandDetails", "playerThreeHandDetails"];
+    const playersDetails = ["playerHandDetails", "playerTwoHandDetails", "playerThreeHandDetails", "playerFourHandDetails"];
     document.getElementById(playersDetails[iteration]).classList.remove("hide");
     let HighCardMessage = "";
     if (handHeirarchy[resultList[Number(iteration)]] === "high-card") {
-        HighCardMessage = " <small><i>(" + highCard + " is your highest card)</i></small>";
+        HighCardMessage = " <small><i>(" + highCard + " is player " + (iteration + 1) + "'s highest card)</i></small>";
     }
     if (iteration === 0) {
         playerCardsInvolved = cardsInvolved;
@@ -265,7 +279,7 @@ function evaluateHand(iteration) {
     if (iteration === 0) {
         resultList[0] = Number(bestHandIndex);
     }
-    if (iteration === 2 || activeRound === 2) {
+    if (iteration === 3 || activeRound === 2) {
         let winningHand = Math.max(...resultList);
         topHand = resultList.indexOf(winningHand);
         /*start how many times number in array*/
@@ -277,7 +291,7 @@ function evaluateHand(iteration) {
         if (getOccurrence(resultList, winningHand) > 1) {
             let winningCard = Math.max(...compareCards);
             if (getOccurrence(compareCards, winningCard) > 1) {
-                showAlert("alert-danger", "It's a draw so far. Replace some cards.", iteration);
+                showAlert("alert-danger", "It's a draw so far. Replace some cards to beat: " + handHeirarchy[bestHandIndex] + " " + winningHand, iteration);
             } else {
                 let tempWinners = [];
                 for (let i = 0; i < resultList.length; i++) {
@@ -295,7 +309,7 @@ function evaluateHand(iteration) {
         });
 
         if (topHand === 0) {
-            if (activeRound === 1 && countingIterations === 2) {
+            if (activeRound === 1 && countingIterations === 3) {
                 document.querySelector("[data-player='" + topHand + "']").classList.remove("alert-info");
                 document.querySelector("[data-player='" + topHand + "']").classList.add("alert-success");
                 showAlert("alert-success", "You won $" + bet + " with " + handHeirarchy[resultList[0]] + "  " + playerCardsInvolved + " <small><i>(" + playerHighCard + " is your highest card)</i></small>", iteration);
@@ -305,21 +319,21 @@ function evaluateHand(iteration) {
             if (activeRound === 2) {
                 document.querySelector("[data-player='" + topHand + "']").classList.remove("alert-info");
                 document.querySelector("[data-player='" + topHand + "']").classList.add("alert-success");
-                showAlert("alert-success", "You won $" + bet + " with " + handHeirarchy[resultList[0]] + "  " + playerCardsInvolved + " <small><i>(" + playerHighCard + " is your highest card)</i></small>", iteration);
+                showAlert("alert-success", "You won $" + bet + " with " + handHeirarchy[resultList[0]] + "  " + playerCardsInvolved + " <small><i>(" + playerHighCard + " is player " + (iteration + 1) + "'s highest card)</i></small>", iteration);
                 console.log("TOP showAlert just ran from active Round 1");
                 return false;
             }
 
         }
-        if (resultList[0] === resultList[1] || resultList[0] === resultList[2]) {
-            if (compareCards[0] === compareCards[1] || compareCards[0] === compareCards[2]) {
-                showAlert("alert-danger", "It's a draw so far. Replace some cards.", iteration);
+        if (resultList[0] === resultList[1] || resultList[0] === resultList[2] || resultList[0] === resultList[3]) {
+            if (compareCards[0] === compareCards[1] || compareCards[0] === compareCards[2] || compareCards[0] === compareCards[3]) {
+                showAlert("alert-danger", "It's a draw so far. Replace some cards to beat: " + handHeirarchy[resultList[0]] + " " + compareCards[0], iteration);
             }
 
             if (topHand !== 0) {
                 document.querySelector("[data-player='" + topHand + "']").classList.remove("alert-info");
                 document.querySelector("[data-player='" + topHand + "']").classList.add("alert-success");
-                showAlert("alert-danger", "You're down. Replace some cards.", iteration);
+                showAlert("alert-danger", "You're down. Replace some cards to win.", iteration);
             } else if (topHand === 0) {
                 showAlert("alert-success", "You won $" + bet + " with " + handHeirarchy[resultList[0]] + "  " + playerCardsInvolved + " <small><i>(" + playerHighCard + " is your highest card)</i></small>", iteration);
                 console.log("TOP showAlert just ran");
@@ -329,7 +343,7 @@ function evaluateHand(iteration) {
             document.querySelector("[data-player='" + topHand + "']").classList.remove("alert-info");
             document.querySelector("[data-player='" + topHand + "']").classList.add("alert-success");
             if (topHand !== 0) {
-                showAlert("alert-danger", "You're down. Replace some cards.", iteration);
+                showAlert("alert-danger", "You're down. Replace some cards to win.", iteration);
             }
         }
 
@@ -344,13 +358,14 @@ function evaluateHand(iteration) {
 
         }
     }
-
 }
 
 function generate(activeCards) {
     return Math.floor(Math.random() * activeCards.length);
 }
 function play(playerBet) {
+    window.location = "#playerCards";
+    //document.querySelector('#playerCards').scrollIntoView();
     activeRound = 1;
     countingIterations = 0;
     replaceAttempts = 0;
@@ -361,6 +376,8 @@ function play(playerBet) {
     document.getElementById("playerHandDetails").classList.add("hide");
     document.getElementById("playerTwoHandDetails").classList.add("hide");
     document.getElementById("playerThreeHandDetails").classList.add("hide");
+    document.getElementById("playerFourHandDetails").classList.add("hide");
+    document.getElementById("playerFourCards").innerHTML = "";
     document.getElementById("playerThreeCards").innerHTML = "";
     document.getElementById("playerTwoCards").innerHTML = "";
     document.getElementById("playerCards").innerHTML = "";
@@ -415,11 +432,25 @@ function play(playerBet) {
             document.getElementById("playerThreeCards").innerHTML = playerCardsHTML;
             player2Obj = handObj;
         }
+
+        if (iteration === 3) {
+            document.getElementById("playerFourCards").innerHTML = playerCardsHTML;
+            player3Obj = handObj;
+        }
+
         evaluateHand(iteration);
     }
     generatePlayer(0);
     generatePlayer(1);
     generatePlayer(2);
+    generatePlayer(3);
+
+
+    /*
+
+numberOfOpponents
+
+    */
 }
 
 function replace(cardTitle, cardNum) {
@@ -458,6 +489,7 @@ function replace(cardTitle, cardNum) {
     availableCards = tempAvailable;
     evaluateHand(0);
     player0Obj = tempHand;
+    //window.location.href = "#status";
 }
 /*https://www.telegraph.co.uk/betting/casino-guides/poker/hand-rankings-chart-cheat-sheet/*/
 

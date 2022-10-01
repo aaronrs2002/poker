@@ -57,17 +57,33 @@
                         </div>
                         <div class="col-6">
                             <h3 id="betTarget">Poker</h3>
+                            <select class="form-control hide" id="howManyopponents"
+                                onClick="javascriptsetOpponentNumber()">
+                                <option value="1">1 opponent</option>
+                                <option value="2">2 opponents</option>
+                                <option value="3" selected>3 opponents</option>
+                            </select>
 
                         </div>
                     </div>
                 </div>
 
             </div>
+            <div class="col-md-12" id="playerFourCards">
+            </div>
+            <div class="col-md-12">
+                <div class="alert alert-info hide" id="playerFourHandDetails" role="alert" data-player="3"></div>
+            </div>
+
+
+
             <div class="col-md-12" id="playerThreeCards">
             </div>
             <div class="col-md-12">
                 <div class="alert alert-info hide" id="playerThreeHandDetails" role="alert" data-player="2"></div>
             </div>
+
+
 
             <div class="col-md-12" id="playerTwoCards">
             </div>
@@ -122,7 +138,7 @@
 
                         <small><a
                                 href="https://www.telegraph.co.uk/betting/casino-guides/poker/hand-rankings-chart-cheat-sheet/"
-                                target="_blank">telegraph.co.uk:credit</a></small>
+                                target="_blank">credit:telegraph.co.uk</a></small>
 
                     </div>
                 </div>
