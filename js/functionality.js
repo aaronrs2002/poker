@@ -365,6 +365,19 @@ function evaluateHand(iteration) {
     }
 }
 
+function clear() {
+    document.getElementById("playerHandDetails").classList.add("hide");
+    document.getElementById("playerTwoHandDetails").classList.add("hide");
+    document.getElementById("playerThreeHandDetails").classList.add("hide");
+    document.getElementById("playerFourHandDetails").classList.add("hide");
+    document.getElementById("playerFourCards").innerHTML = "";
+    document.getElementById("playerThreeCards").innerHTML = "";
+    document.getElementById("playerTwoCards").innerHTML = "";
+    document.getElementById("playerCards").innerHTML = "";
+    document.getElementById("status").classList.add("hide");
+}
+
+
 function fold() {
     playerMoney = playerMoney - bet;
     setPlayerMoney(playerMoney);
@@ -373,9 +386,8 @@ function fold() {
         e.disabled = false;
     });
     showAlert("alert-danger", "Folded. You lost $" + bet, 0);
-
-    document.getElementById("betTarget").innerHTML = "Place your bet.";
-    document.getElementById("status").classList.add("hide");
+    document.getElementById("betTarget").innerHTML = "Folded. Place your bet.";
+    clear();
     window.location = "#";
 }
 
@@ -394,15 +406,7 @@ function play(playerBet) {
     [].forEach.call(document.querySelectorAll('.dealAmt'), function (e) {
         e.disabled = true;
     });
-    document.getElementById("playerHandDetails").classList.add("hide");
-    document.getElementById("playerTwoHandDetails").classList.add("hide");
-    document.getElementById("playerThreeHandDetails").classList.add("hide");
-    document.getElementById("playerFourHandDetails").classList.add("hide");
-    document.getElementById("playerFourCards").innerHTML = "";
-    document.getElementById("playerThreeCards").innerHTML = "";
-    document.getElementById("playerTwoCards").innerHTML = "";
-    document.getElementById("playerCards").innerHTML = "";
-    document.getElementById("status").classList.add("hide");
+    clear();
     bet = playerBet;
     bet = Math.round(bet);
     document.getElementById("betTarget").innerHTML = "Bet $" + bet;
