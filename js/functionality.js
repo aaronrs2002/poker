@@ -43,12 +43,14 @@ let bet = 0;
 function setPlayerMoney(passPlayerMoney) {
     playerMoney = passPlayerMoney;
     playerMoney = Math.round(playerMoney);
+
     document.getElementById("playerMoney").innerHTML = passPlayerMoney;
     document.querySelector("#playerMoney").innerHTML = passPlayerMoney;/*SAFARI BUG NEEDS BOTH*/
     localStorage.setItem("balance", passPlayerMoney);
 }
 
 function showAlert(status, message, player) {
+    document.getElementById("foldBt").classList.add("hide");
     function enablePlayBts() {
         [].forEach.call(document.querySelectorAll('.dealAmt'), function (e) {
             e.disabled = false;
@@ -333,7 +335,8 @@ function evaluateHand(iteration) {
             if (topHand !== 0) {
                 document.querySelector("[data-player='" + topHand + "']").classList.remove("alert-info");
                 document.querySelector("[data-player='" + topHand + "']").classList.add("alert-success");
-                showAlert("alert-danger", "You're down. Replace some cards to win.", iteration);
+                showAlert("alert-danger", "You're down. Replace some cards to win. <br/>Each card replacement ups your bet by 1/5th", iteration);
+                document.getElementById("foldBt").classList.remove("hide");
             } else if (topHand === 0) {
                 showAlert("alert-success", "You won $" + bet + " with " + handHeirarchy[resultList[0]] + "  " + playerCardsInvolved + " <small><i>(" + playerHighCard + " is your highest card)</i></small>", iteration);
                 console.log("TOP showAlert just ran");
@@ -343,13 +346,15 @@ function evaluateHand(iteration) {
             document.querySelector("[data-player='" + topHand + "']").classList.remove("alert-info");
             document.querySelector("[data-player='" + topHand + "']").classList.add("alert-success");
             if (topHand !== 0) {
-                showAlert("alert-danger", "You're down. Replace some cards to win.", iteration);
+                showAlert("alert-danger", "You're down. Replace some cards to win.<br/> Each card replacement ups your bet by 1/5th", iteration);
+                document.getElementById("foldBt").classList.remove("hide");
             }
         }
 
         if (replaceAttempts === 5 && topHand !== 0) {
             playerMoney = playerMoney - bet;
-            setPlayerMoney(playerMoney)
+            setPlayerMoney(playerMoney);
+            bet = Math.round(bet);
             showAlert("alert-danger", "All out of chances. You lost $" + bet, iteration);
         } else if (replaceAttempts === 5 && topHand === 0) {
             if (activeRound === 2) {
@@ -360,10 +365,24 @@ function evaluateHand(iteration) {
     }
 }
 
+function fold() {
+    playerMoney = playerMoney - bet;
+    [].forEach.call(document.querySelectorAll('.dealAmt'), function (e) {
+        e.disabled = false;
+    });
+
+    setPlayerMoney(playerMoney);
+    document.getElementById("betTarget").innerHTML = "Place your bet.";
+    document.getElementById("status").classList.add("hide");
+    window.location = "#";
+}
+
+
 function generate(activeCards) {
     return Math.floor(Math.random() * activeCards.length);
 }
 function play(playerBet) {
+    document.getElementById("foldBt").classList.add("hide");
     window.location = "#playerCards";
     //document.querySelector('#playerCards').scrollIntoView();
     activeRound = 1;
@@ -383,6 +402,7 @@ function play(playerBet) {
     document.getElementById("playerCards").innerHTML = "";
     document.getElementById("status").classList.add("hide");
     bet = playerBet;
+    bet = Math.round(bet);
     document.getElementById("betTarget").innerHTML = "Bet $" + bet;
     [].forEach.call(document.querySelectorAll(".alert[data-player]"), function (e) {
         e.classList.add("alert-info");
@@ -454,6 +474,10 @@ numberOfOpponents
 }
 
 function replace(cardTitle, cardNum) {
+    let oneFithBet = bet / 5;
+    bet = bet + oneFithBet;
+    bet = Math.round(bet);
+    document.getElementById("betTarget").innerHTML = "$" + bet;
     replaceAttempts = replaceAttempts + 1;
     document.querySelector("span[data-replace='" + cardNum + "']").classList.add("hide");
     document.getElementById("playerHandDetails").classList.remove("alert-success");
