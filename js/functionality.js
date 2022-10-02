@@ -327,6 +327,7 @@ function evaluateHand(iteration) {
             }
 
         }
+        let currentWinner = "";
         if (resultList[0] === resultList[1] || resultList[0] === resultList[2] || resultList[0] === resultList[3]) {
             if (compareCards[0] === compareCards[1] || compareCards[0] === compareCards[2] || compareCards[0] === compareCards[3]) {
                 showAlert("alert-danger", "It's a draw so far. Replace some cards to beat: " + handHeirarchy[resultList[0]] + " " + compareCards[0], iteration);
@@ -335,7 +336,11 @@ function evaluateHand(iteration) {
             if (topHand !== 0) {
                 document.querySelector("[data-player='" + topHand + "']").classList.remove("alert-info");
                 document.querySelector("[data-player='" + topHand + "']").classList.add("alert-success");
-                showAlert("alert-danger", "You're down. Replace some cards to win. <br/>Each card replacement ups your bet by 1/5th", iteration);
+                if (document.querySelector(".alert-success[data-player]").innerHTML) {
+                    currentWinner = "<br/>Current hand to beat: " + document.querySelector(".alert-success[data-player]").innerHTML.substring(document.querySelector(".alert-success[data-player]").innerHTML.indexOf(">") + 1, document.querySelector(".alert-success[data-player]").innerHTML.length);
+                }
+
+                showAlert("alert-danger", "You're down. Replace some cards to win." + currentWinner + " <br/>Each card replacement ups your bet by 1/5th", iteration);
                 document.getElementById("foldBt").classList.remove("hide");
             } else if (topHand === 0) {
                 showAlert("alert-success", "You won $" + bet + " with " + handHeirarchy[resultList[0]] + "  " + playerCardsInvolved + " <small><i>(" + playerHighCard + " is your highest card)</i></small>", iteration);
@@ -345,8 +350,11 @@ function evaluateHand(iteration) {
         } else {
             document.querySelector("[data-player='" + topHand + "']").classList.remove("alert-info");
             document.querySelector("[data-player='" + topHand + "']").classList.add("alert-success");
+            if (document.querySelector(".alert-success[data-player]").innerHTML) {
+                currentWinner = "<br/>Current hand to beat: " + document.querySelector(".alert-success[data-player]").innerHTML.substring(document.querySelector(".alert-success[data-player]").innerHTML.indexOf(">") + 1, document.querySelector(".alert-success[data-player]").innerHTML.length);
+            }
             if (topHand !== 0) {
-                showAlert("alert-danger", "You're down. Replace some cards to win.<br/> Each card replacement ups your bet by 1/5th", iteration);
+                showAlert("alert-danger", "You're down. Replace some cards to win." + currentWinner + "<br/> Each card replacement ups your bet by 1/5th", iteration);
                 document.getElementById("foldBt").classList.remove("hide");
             }
         }
@@ -386,7 +394,7 @@ function fold() {
         e.disabled = false;
     });
     showAlert("alert-danger", "Folded. You lost $" + bet, 0);
-    document.getElementById("betTarget").innerHTML = "Folded. Place your bet.";
+    document.getElementById("betTarget").innerHTML = "Folded. You lost $" + bet + ". Place your bet.";
     clear();
     window.location = "#";
 }
@@ -483,7 +491,7 @@ function replace(cardTitle, cardNum) {
     let oneFithBet = bet / 5;
     bet = bet + oneFithBet;
     bet = Math.round(bet);
-    document.getElementById("betTarget").innerHTML = "$" + bet;
+    document.getElementById("betTarget").innerHTML = "Bet $" + bet;
     replaceAttempts = replaceAttempts + 1;
     document.querySelector("span[data-replace='" + cardNum + "']").classList.add("hide");
     document.getElementById("playerHandDetails").classList.remove("alert-success");
@@ -520,6 +528,8 @@ function replace(cardTitle, cardNum) {
     evaluateHand(0);
     player0Obj = tempHand;
     //window.location.href = "#status";
+    let currentMessage = document.getElementById("message").innerHTML;
+    document.getElementById("message").innerHTML = currentMessage + "<br/> <small>Bet: $" + bet + "</small>";
 }
 /*https://www.telegraph.co.uk/betting/casino-guides/poker/hand-rankings-chart-cheat-sheet/*/
 
