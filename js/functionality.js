@@ -48,15 +48,15 @@ function setPlayerMoney(passPlayerMoney) {
     document.querySelector("#playerMoney").innerHTML = passPlayerMoney;/*SAFARI BUG NEEDS BOTH*/
     localStorage.setItem("balance", passPlayerMoney);
 }
-
+function enablePlayBts() {
+    [].forEach.call(document.querySelectorAll('.dealAmt'), function (e) {
+        e.disabled = false;
+    });
+}
 function showAlert(status, message, player) {
     document.getElementById("foldBt").classList.add("hide");
-    function enablePlayBts() {
-        [].forEach.call(document.querySelectorAll('.dealAmt'), function (e) {
-            e.disabled = false;
-        });
-    }
-    if (replaceAttempts === 5 && message.indexOf("All out of chances.") !== -1) {
+
+    if (replaceAttempts === 5 && message.indexOf("All out of chances. You didn't win this time.") !== -1) {
         enablePlayBts();
     }
 
@@ -364,6 +364,7 @@ function evaluateHand(iteration) {
             setPlayerMoney(playerMoney);
             bet = Math.round(bet);
             showAlert("alert-danger", "All out of chances. You lost $" + bet, iteration);
+            enablePlayBts();
         } else if (replaceAttempts === 5 && topHand === 0) {
             if (activeRound === 2) {
                 showAlert("alert-success", "You just barely won $" + bet, iteration);
@@ -393,7 +394,7 @@ function fold() {
     [].forEach.call(document.querySelectorAll('.dealAmt'), function (e) {
         e.disabled = false;
     });
-    showAlert("alert-danger", "Folded. You lost $" + bet, 0);
+    showAlert("alert-danger", "Folded.", 0);
     document.getElementById("betTarget").innerHTML = "Folded. You lost $" + bet + ". Place your bet.";
     clear();
     window.location = "#";
@@ -528,8 +529,11 @@ function replace(cardTitle, cardNum) {
     evaluateHand(0);
     player0Obj = tempHand;
     //window.location.href = "#status";
-    let currentMessage = document.getElementById("message").innerHTML;
-    document.getElementById("message").innerHTML = currentMessage + "<br/> <small>Bet: $" + bet + "</small>";
+    if (replaceAttempts !== 5) {
+        let currentMessage = document.getElementById("message").innerHTML;
+        document.getElementById("message").innerHTML = currentMessage + "<br/> <small>Bet: $" + bet + "</small>";
+    }
+
 }
 /*https://www.telegraph.co.uk/betting/casino-guides/poker/hand-rankings-chart-cheat-sheet/*/
 
