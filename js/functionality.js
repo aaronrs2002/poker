@@ -532,7 +532,7 @@ function replace(cardTitle, cardNum) {
     if (replaceAttempts !== 5) {
         let currentMessage = document.getElementById("message").innerHTML;
         playerMoney = Number(localStorage.getItem("balance"));
-        document.getElementById("message").innerHTML = "<span class='badge bg-info text-light'>Current balance: $" + playerMoney + "</span><span class='badge bg-info text-light'> Bet: $" + bet + "</span><br/>" + currentMessage;
+        document.getElementById("message").innerHTML = "<span class='badge bg-info text-dark'>Current balance: $" + playerMoney + "</span><span class='badge bg-info text-dark'> Bet: $" + bet + "</span><br/>" + currentMessage;
     }
 
 }
