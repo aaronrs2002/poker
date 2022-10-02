@@ -531,13 +531,13 @@ function replace(cardTitle, cardNum) {
     //window.location.href = "#status";
     if (replaceAttempts !== 5) {
         let currentMessage = document.getElementById("message").innerHTML;
-        document.getElementById("message").innerHTML = "<span class='badge bg-info text-dark'>Bet: $" + bet + "</span><br/>" + currentMessage;
+        playerMoney = Number(localStorage.getItem("balance"));
+        document.getElementById("message").innerHTML = "<span class='badge bg-info text-dark'>Current balance: $" + playerMoney + " Bet: $" + bet + "</span><br/>" + currentMessage;
     }
 
 }
 
-`<button type="button" class="btn btn-primary">Notifications <span class="badge bg-secondary">4</span>
-</button>`
+
 /*https://www.telegraph.co.uk/betting/casino-guides/poker/hand-rankings-chart-cheat-sheet/*/
 
 /*royal-flush: five consecutive cards of the same suit in order of value from 10 through to ace*/
