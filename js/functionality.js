@@ -223,24 +223,24 @@ function evaluateHand(iteration) {
                 bestHandIndex = 3;
             }
             tripleQty = tripleQty + 1;
-            cardsInvolved = cardsInvolved + " - " + cardHeirarchy[valueArr.indexOf(3)] + "s";
+            cardsInvolved = cardsInvolved + " - " + cardHeirarchy[valueArr.lastIndexOf(3)] + "s";
         }
         if (valueArr[i] == 4) {
             if (bestHandIndex < 7) {
                 bestHandIndex = 7;
             }
-            cardsInvolved = cardsInvolved + " - " + cardHeirarchy[valueArr.indexOf(4)] + "s";
+            cardsInvolved = cardsInvolved + " - " + cardHeirarchy[valueArr.lastIndexOf(4)] + "s";
         }
     }
 
     if (valueArr.indexOf(2) !== -1) {
-        compareCards[iteration] = valueArr.indexOf(2);
+        compareCards[iteration] = valueArr.lastIndexOf(2);
     }
     if (valueArr.indexOf(3) !== -1) {
-        compareCards[iteration] = valueArr.indexOf(3);
+        compareCards[iteration] = valueArr.lastIndexOf(3);
     }
     if (valueArr.indexOf(4) !== -1) {
-        compareCards[iteration] = valueArr.indexOf(4);
+        compareCards[iteration] = valueArr.lastIndexOf(4);
     }
     if (pairQty == 2) { /*checking for 2 pair*/
         if (bestHandIndex < 2) {
@@ -301,7 +301,9 @@ function evaluateHand(iteration) {
                         tempWinners.push(compareCards[i]);
                     }
                 }
+                console.log("tempWinners: " + tempWinners);
                 winningCard = Math.max(...tempWinners);
+                console.log("compareCards: " + compareCards + " - winningCard: " + winningCard + " - resultList: " + resultList);
                 topHand = compareCards.indexOf(winningCard)
             }
         }
