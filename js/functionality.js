@@ -284,6 +284,7 @@ function evaluateHand(iteration) {
     if (iteration === 3 || activeRound === 2) {
         let winningHand = Math.max(...resultList);
         topHand = resultList.indexOf(winningHand);
+        let winningCard = Math.max(...compareCards);
         /*start how many times number in array*/
         function getOccurrence(resultList, value) {
             var count = 0;
@@ -291,7 +292,7 @@ function evaluateHand(iteration) {
             return count;
         }
         if (getOccurrence(resultList, winningHand) > 1) {
-            let winningCard = Math.max(...compareCards);
+
             if (getOccurrence(compareCards, winningCard) > 1) {
                 showAlert("alert-danger", "It's a draw so far. Replace some cards to beat: " + handHeirarchy[bestHandIndex] + " " + winningHand, iteration);
             } else {
@@ -311,7 +312,8 @@ function evaluateHand(iteration) {
             e.classList.add("alert-info");
             e.classList.remove("alert-success");
         });
-
+        console.log("A " + cardHeirarchy[winningCard] + " won this?");
+        //if (topHand === 0 && player0Obj.indexOf(cardHeirarchy[winningCard]) !== -1) {
         if (topHand === 0) {
             if (activeRound === 1 && countingIterations === 3) {
                 document.querySelector("[data-player='" + topHand + "']").classList.remove("alert-info");
@@ -370,6 +372,7 @@ function evaluateHand(iteration) {
         } else if (replaceAttempts === 5 && topHand === 0) {
             if (activeRound === 2) {
                 showAlert("alert-success", "You just barely won $" + bet, iteration);
+                enablePlayBts();
             }
 
         }
