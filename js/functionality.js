@@ -56,10 +56,9 @@ function enablePlayBts() {
 }
 function showAlert(status, message, player) {
     document.getElementById("foldBt").classList.add("hide");
-    enablePlayBts();
-    /* if (replaceAttempts === 5 && message.indexOf("All out of chances. You didn't win this time.") !== -1) {
-         enablePlayBts();
-     }*/
+    if (replaceAttempts === 5) {
+        enablePlayBts();
+    }
 
 
     if (message.indexOf("You won $") !== -1) {
@@ -363,6 +362,7 @@ function clear() {
 
 
 function fold() {
+    enablePlayBts();
     playerMoney = playerMoney - bet;
     setPlayerMoney(playerMoney);
     bet = Math.round(bet);
