@@ -27,6 +27,7 @@ let compareCards = [0, 0, 0, 0];
 let replaceAttempts = 0;
 let playerCardsInvolved = "";
 let playerHighCard = "";
+let topHand;
 
 
 let countingIterations = 0;
@@ -298,26 +299,15 @@ function evaluateHand(iteration) {
             return count;
         }
         if (getOccurrence(resultList, winningHand) > 1 && iteration === 3) {
-            /*for (let i = 0; i < resultList.length; i++) {
-                if (resultList[i] !== winningHand) {
-                    compareCards[i] = -1;
-                }
-            }*/
             if (getOccurrence(compareCards, winningCard) > 1) {
                 for (let i = 0; i < player0Obj.length; i++) {
                     if (player0Obj[i].value === handHeirarchy[winningHand]) {
                         showAlert("alert-danger", "It's a draw so far. Bet again.");
-                        // enablePlayBts();
                         return false;
                     }
                 }
             }
             if (getOccurrence(compareCards, winningCard) === 1) {
-                /*  for (let i = 0; i < resultList.length; i++) {
-                      if (resultList[i] !== winningHand) {
-                          compareCards[i] = -1;
-                      }
-                  }*/
                 winningCard = Math.max(...compareCards);
                 topHand = compareCards.indexOf(winningCard);
             }
@@ -326,12 +316,15 @@ function evaluateHand(iteration) {
             e.classList.add("alert-info");
             e.classList.remove("alert-success");
         });
-        document.querySelector("[data-player='" + topHand + "']").classList.remove("alert-info");
-        document.querySelector("[data-player='" + topHand + "']").classList.add("alert-success");
 
+        console.log("compareCards: " + compareCards + " -  resultList: " + resultList + " - winningCard: " + winningCard);
         if (compareCards[0] === winningCard) {
+            document.querySelector("[data-player='0']").classList.remove("alert-info");
+            document.querySelector("[data-player='0']").classList.add("alert-success");
             showAlert("alert-success", "You won $" + bet + " with " + handHeirarchy[resultList[0]] + "  " + playerCardsInvolved + " <small><i>(" + playerHighCard + " is your highest card)</i></small>", iteration);
         } else {
+            document.querySelector("[data-player='" + compareCards.indexOf(winningCard) + "']").classList.remove("alert-info");
+            document.querySelector("[data-player='" + compareCards.indexOf(winningCard) + "']").classList.add("alert-success");
             let handToBeat = document.querySelector(".alert-success[data-player]").innerHTML.substring(document.querySelector(".alert-success[data-player]").innerHTML.indexOf(">") + 1, document.querySelector(".alert-success[data-player]").innerHTML.length);
             // handToBeat = handToBeat.substring(handToBeat.indexOf(`<i class="fas fa-user">` + 1, handToBeat.length));
             showAlert("alert-danger", "You're down. Replace some cards to win.<br/>Hand to beat: " + handToBeat + "<br/>Each card replacement ups your bet by 1/5th", iteration);
@@ -387,6 +380,7 @@ function generate(activeCards) {
     return Math.floor(Math.random() * activeCards.length);
 }
 function play(playerBet) {
+    topHand;
     document.getElementById("foldBt").classList.add("hide");
     window.location = "#playerCards";
     //document.querySelector('#playerCards').scrollIntoView();
