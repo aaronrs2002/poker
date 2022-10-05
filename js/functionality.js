@@ -285,15 +285,12 @@ function evaluateHand(iteration) {
         let winningHand = Math.max(...resultList);
         topHand = resultList.indexOf(winningHand);
         /*we only want to count the winning cards of the wnning hand*/
-        let tempCompareCards = [];
-        for (let i = 0; i < compareCards.length; i++) {
+        for (let i = 0; i < resultList.length; i++) {
             if (resultList[i] !== winningHand) {
-                tempCompareCards.push(-1)
-            } else {
-                tempCompareCards.push(compareCards[i])
+                compareCards[i] = -1;
             }
         }
-        let winningCard = Math.max(...tempCompareCards);
+        let winningCard = Math.max(...compareCards);
         /*start how many times number in array*/
         function getOccurrence(resultList, value) {
             var count = 0;
@@ -301,11 +298,11 @@ function evaluateHand(iteration) {
             return count;
         }
         if (getOccurrence(resultList, winningHand) > 1 && iteration === 3) {
-            for (let i = 0; i < resultList.length; i++) {
+            /*for (let i = 0; i < resultList.length; i++) {
                 if (resultList[i] !== winningHand) {
                     compareCards[i] = -1;
                 }
-            }
+            }*/
             if (getOccurrence(compareCards, winningCard) > 1) {
                 for (let i = 0; i < player0Obj.length; i++) {
                     if (player0Obj[i].value === handHeirarchy[winningHand]) {
