@@ -329,7 +329,7 @@ function evaluateHand(iteration) {
         document.querySelector("[data-player='" + topHand + "']").classList.remove("alert-info");
         document.querySelector("[data-player='" + topHand + "']").classList.add("alert-success");
 
-        if (topHand === 0) {
+        if (compareCards[0] === winningCard) {
             showAlert("alert-success", "You won $" + bet + " with " + handHeirarchy[resultList[0]] + "  " + playerCardsInvolved + " <small><i>(" + playerHighCard + " is your highest card)</i></small>", iteration);
         } else {
             let handToBeat = document.querySelector(".alert-success[data-player]").innerHTML.substring(document.querySelector(".alert-success[data-player]").innerHTML.indexOf(">") + 1, document.querySelector(".alert-success[data-player]").innerHTML.length);
