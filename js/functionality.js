@@ -284,49 +284,59 @@ function evaluateHand(iteration) {
     if (iteration === 3 || activeRound === 2) {
         let winningHand = Math.max(...resultList);
         topHand = resultList.indexOf(winningHand);
-        let winningCard = Math.max(...compareCards);
+        /*we only want to count the winning cards of the wnning hand*/
+        let tempCompareCards = [];
+        for (let i = 0; i < compareCards.length; i++) {
+            if (resultList[i] !== winningHand) {
+                tempCompareCards.push(-1)
+            } else {
+                tempCompareCards.push(compareCards[i])
+            }
+        }
+        let winningCard = Math.max(...tempCompareCards);
         /*start how many times number in array*/
         function getOccurrence(resultList, value) {
             var count = 0;
             resultList.forEach((v) => (v === value && count++));
             return count;
         }
-        if (getOccurrence(resultList, winningHand) > 1) {
-
+        if (getOccurrence(resultList, winningHand) > 1 && iteration === 3) {
             if (getOccurrence(compareCards, winningCard) > 1) {
-                showAlert("alert-danger", "It's a draw so far. Replace some cards to beat: " + handHeirarchy[bestHandIndex] + " " + winningHand, iteration);
-            } else {
-                let tempWinners = [];
-                for (let i = 0; i < resultList.length; i++) {
-                    if (resultList[i] === winningHand) {
-                        tempWinners.push(compareCards[i]);
+                for (let i = 0; i < player0Obj.length; i++) {
+                    if (player0Obj[i].value === handHeirarchy[winningHand]) {
+                        showAlert("alert-danger", "It's a draw so far. Bet again.");
+                        enablePlayBts();
+                        return false;
                     }
                 }
-                console.log("tempWinners: " + tempWinners);
-                winningCard = Math.max(...tempWinners);
-                console.log("compareCards: " + compareCards + " - winningCard: " + winningCard + " - resultList: " + resultList);
-                topHand = compareCards.indexOf(winningCard)
+            }
+            if (getOccurrence(compareCards, winningCard) === 1) {
+                for (let i = 0; i < resultList.length; i++) {
+                    if (resultList[i] !== winningHand) {
+                        compareCards[i] = -1;
+                    }
+                }
+                winningCard = Math.max(...compareCards);
+                topHand = compareCards.indexOf(winningCard);
             }
         }
         [].forEach.call(document.querySelectorAll(".alert[data-player]"), function (e) {
             e.classList.add("alert-info");
             e.classList.remove("alert-success");
         });
-        console.log("A " + cardHeirarchy[winningCard] + " won this?");
-        //if (topHand === 0 && player0Obj.indexOf(cardHeirarchy[winningCard]) !== -1) {
-        if (topHand === 0) {
-            if (activeRound === 1 && countingIterations === 3) {
+
+        console.log("resultList: " + resultList + " winningHand: " + winningHand + " compareCards: " + compareCards + " - winningCard: " + winningCard);
+        if (topHand === 0 && resultList[0] === winningHand) {
+            if (activeRound === 1 && countingIterations === 3 && compareCards[0] === winningCard) {
                 document.querySelector("[data-player='" + topHand + "']").classList.remove("alert-info");
                 document.querySelector("[data-player='" + topHand + "']").classList.add("alert-success");
                 showAlert("alert-success", "You won $" + bet + " with " + handHeirarchy[resultList[0]] + "  " + playerCardsInvolved + " <small><i>(" + playerHighCard + " is your highest card)</i></small>", iteration);
-                console.log("TOP showAlert just ran from active Round 1");
                 return false;
             }
             if (activeRound === 2) {
                 document.querySelector("[data-player='" + topHand + "']").classList.remove("alert-info");
                 document.querySelector("[data-player='" + topHand + "']").classList.add("alert-success");
                 showAlert("alert-success", "You won $" + bet + " with " + handHeirarchy[resultList[0]] + "  " + playerCardsInvolved + " <small><i>(" + playerHighCard + " is player " + (iteration + 1) + "'s highest card)</i></small>", iteration);
-                console.log("TOP showAlert just ran from active Round 1");
                 return false;
             }
 
@@ -346,9 +356,8 @@ function evaluateHand(iteration) {
 
                 showAlert("alert-danger", "You're down. Replace some cards to win." + currentWinner + " <br/>Each card replacement ups your bet by 1/5th", iteration);
                 document.getElementById("foldBt").classList.remove("hide");
-            } else if (topHand === 0) {
+            } else if (topHand === 0 && resultList[0] === winningHand) {
                 showAlert("alert-success", "You won $" + bet + " with " + handHeirarchy[resultList[0]] + "  " + playerCardsInvolved + " <small><i>(" + playerHighCard + " is your highest card)</i></small>", iteration);
-                console.log("TOP showAlert just ran");
                 return false;
             }
         } else {
