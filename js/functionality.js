@@ -56,7 +56,7 @@ function enablePlayBts() {
 }
 function showAlert(status, message, player) {
     document.getElementById("foldBt").classList.add("hide");
-    if (replaceAttempts === 5) {
+    if (replaceAttempts === 5 || document.querySelector(".alert-success[data-player='0']") !== null) {
         enablePlayBts();
     }
 
