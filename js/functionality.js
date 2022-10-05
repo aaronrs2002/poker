@@ -326,8 +326,11 @@ function evaluateHand(iteration) {
             document.querySelector("[data-player='" + compareCards.indexOf(winningCard) + "']").classList.add("alert-success");
             let handToBeat = document.querySelector(".alert-success[data-player]").innerHTML.substring(document.querySelector(".alert-success[data-player]").innerHTML.indexOf(">") + 1, document.querySelector(".alert-success[data-player]").innerHTML.length);
             // handToBeat = handToBeat.substring(handToBeat.indexOf(`<i class="fas fa-user">` + 1, handToBeat.length));
-            showAlert("alert-danger", "You're down. Replace some cards to win.<br/>Hand to beat: " + handToBeat + "<br/>Each card replacement ups your bet by 1/5th", iteration);
-            document.getElementById("foldBt").classList.remove("hide");
+            if (replaceAttempts !== 5) {
+                showAlert("alert-danger", "You're down. Replace some cards to win.<br/>Hand to beat: " + handToBeat + "<br/>Each card replacement ups your bet by 1/5th", iteration);
+                document.getElementById("foldBt").classList.remove("hide");
+            }
+
 
         }
 
