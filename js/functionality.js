@@ -301,6 +301,11 @@ function evaluateHand(iteration) {
             return count;
         }
         if (getOccurrence(resultList, winningHand) > 1 && iteration === 3) {
+            for (let i = 0; i < resultList.length; i++) {
+                if (resultList[i] !== winningHand) {
+                    compareCards[i] = -1;
+                }
+            }
             if (getOccurrence(compareCards, winningCard) > 1) {
                 for (let i = 0; i < player0Obj.length; i++) {
                     if (player0Obj[i].value === handHeirarchy[winningHand]) {
@@ -311,11 +316,11 @@ function evaluateHand(iteration) {
                 }
             }
             if (getOccurrence(compareCards, winningCard) === 1) {
-                for (let i = 0; i < resultList.length; i++) {
-                    if (resultList[i] !== winningHand) {
-                        compareCards[i] = -1;
-                    }
-                }
+                /*  for (let i = 0; i < resultList.length; i++) {
+                      if (resultList[i] !== winningHand) {
+                          compareCards[i] = -1;
+                      }
+                  }*/
                 winningCard = Math.max(...compareCards);
                 topHand = compareCards.indexOf(winningCard);
             }
