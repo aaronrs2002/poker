@@ -298,14 +298,6 @@ function evaluateHand(iteration) {
             return count;
         }
         if (getOccurrence(resultList, winningHand) > 1 && iteration === 3) {
-            if (getOccurrence(compareCards, winningCard) > 1) {
-                for (let i = 0; i < player0Obj.length; i++) {
-                    if (player0Obj[i].value === handHeirarchy[winningHand]) {
-                        showAlert("alert-danger", "It's a draw so far. Bet again.");
-                        return false;
-                    }
-                }
-            }
             if (getOccurrence(compareCards, winningCard) === 1) {
                 winningCard = Math.max(...compareCards);
                 topHand = compareCards.indexOf(winningCard);
@@ -315,6 +307,12 @@ function evaluateHand(iteration) {
             e.classList.add("alert-info");
             e.classList.remove("alert-success");
         });
+        if (getOccurrence(compareCards, winningCard) > 1) {
+            if (compareCards[0] === winningCard) {
+                showAlert("alert-danger", "It's a draw so far. Replace some of your cards to get the win.<br/>Each card replacement ups your bet by 1/5th");
+                return false;
+            }
+        }
 
         console.log("compareCards: " + compareCards + " -  resultList: " + resultList + " - winningCard: " + winningCard);
         if (compareCards[0] === winningCard) {
