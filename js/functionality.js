@@ -59,25 +59,14 @@ function showAlert(status, message, player) {
     if (replaceAttempts === 5 || document.querySelector(".alert-success[data-player='0']") !== null) {
         enablePlayBts();
     }
-
-
     if (message.indexOf("You won $") !== -1) {
-        console.log("message.indexOf('You won $'): " + message.indexOf("You won $") + " you Won. ADD MONEY. balance: " + playerMoney);
         if (betPaid === false) {
-
-
             if (activeRound === 1 && countingIterations === 3) {
                 playerMoney = playerMoney + bet;
-                console.log("Won at the BEGINNING");
-
             }
-
-
             if (activeRound === 2) {
                 playerMoney = playerMoney + bet;
-                console.log("Won at the END");
             }
-
             setPlayerMoney(playerMoney);
             betPaid = true;
         }
@@ -313,8 +302,6 @@ function evaluateHand(iteration) {
                 return false;
             }
         }
-
-        console.log("compareCards: " + compareCards + " -  resultList: " + resultList + " - winningCard: " + winningCard);
         if (compareCards[0] === winningCard) {
             document.querySelector("[data-player='0']").classList.remove("alert-info");
             document.querySelector("[data-player='0']").classList.add("alert-success");
@@ -328,10 +315,7 @@ function evaluateHand(iteration) {
                 showAlert("alert-danger", "You're down. Replace some cards to win.<br/>Hand to beat: " + handToBeat + "<br/>Each card replacement ups your bet by 1/5th", iteration);
                 document.getElementById("foldBt").classList.remove("hide");
             }
-
-
         }
-
         if (replaceAttempts === 5 && compareCards[0] !== winningCard && topHand !== 0) {
             playerMoney = playerMoney - bet;
             setPlayerMoney(playerMoney);
@@ -343,10 +327,8 @@ function evaluateHand(iteration) {
             if (activeRound === 2) {
                 showAlert("alert-success", "You just barely won $" + bet, iteration);
             }
-
         }
     }
-
 }
 
 function clear() {
@@ -360,7 +342,6 @@ function clear() {
     document.getElementById("playerCards").innerHTML = "";
     document.getElementById("status").classList.add("hide");
 }
-
 
 function fold() {
     enablePlayBts();
@@ -380,11 +361,11 @@ function fold() {
 function generate(activeCards) {
     return Math.floor(Math.random() * activeCards.length);
 }
+
 function play(playerBet) {
     topHand;
     document.getElementById("foldBt").classList.add("hide");
     window.location = "#playerCards";
-    //document.querySelector('#playerCards').scrollIntoView();
     activeRound = 1;
     countingIterations = 0;
     replaceAttempts = 0;
@@ -439,30 +420,20 @@ function play(playerBet) {
             document.getElementById("playerTwoCards").innerHTML = playerCardsHTML;
             player1Obj = handObj;
         }
-
         if (iteration === 2) {
             document.getElementById("playerThreeCards").innerHTML = playerCardsHTML;
             player2Obj = handObj;
         }
-
         if (iteration === 3) {
             document.getElementById("playerFourCards").innerHTML = playerCardsHTML;
             player3Obj = handObj;
         }
-
         evaluateHand(iteration);
     }
     generatePlayer(0);
     generatePlayer(1);
     generatePlayer(2);
     generatePlayer(3);
-
-
-    /*
-
-numberOfOpponents
-
-    */
 }
 
 function replace(cardTitle, cardNum) {
@@ -486,7 +457,6 @@ function replace(cardTitle, cardNum) {
     const newNum = generate(availableCards);
     for (let i = 0; i < tempHand.length; i++) {
         if (tempHand[i].value + "-" + tempHand[i].suit === cardTitle) {
-
             tempHand[i] = {
                 suit: availableCards[newNum].substring(availableCards[newNum].indexOf("-") + 1, availableCards[newNum].length),
                 value: availableCards[newNum].substring(0, availableCards[newNum].indexOf("-"))
@@ -511,7 +481,6 @@ function replace(cardTitle, cardNum) {
         playerMoney = Number(localStorage.getItem("balance"));
         document.getElementById("message").innerHTML = "<span class='badge bg-info text-dark'>Current balance: $" + playerMoney + "</span><span class='badge bg-info text-dark'> Bet: $" + bet + "</span><br/>" + currentMessage;
     }
-
 }
 
 
