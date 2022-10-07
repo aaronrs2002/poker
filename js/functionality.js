@@ -302,6 +302,19 @@ function evaluateHand(iteration) {
                 return false;
             }
         }
+        if (replaceAttempts === 5 && compareCards[0] !== winningCard && topHand !== 0) {
+            playerMoney = playerMoney - bet;
+            setPlayerMoney(playerMoney);
+            bet = Math.round(bet);
+            showAlert("alert-danger", "All out of chances. You lost $" + bet, iteration);
+            return false;
+        }
+        if (replaceAttempts === 5 && topHand === 0 && compareCards[0] === winningCard) {
+            if (activeRound === 2) {
+                showAlert("alert-success", "You just barely won $" + bet, iteration);
+                return false;
+            }
+        }
         if (compareCards[0] === winningCard) {
             document.querySelector("[data-player='0']").classList.remove("alert-info");
             document.querySelector("[data-player='0']").classList.add("alert-success");
@@ -314,18 +327,6 @@ function evaluateHand(iteration) {
             if (replaceAttempts !== 5) {
                 showAlert("alert-danger", "You're down. Replace some cards to win.<br/>Hand to beat: " + handToBeat + "<br/>Each card replacement ups your bet by 1/5th", iteration);
                 document.getElementById("foldBt").classList.remove("hide");
-            }
-        }
-        if (replaceAttempts === 5 && compareCards[0] !== winningCard && topHand !== 0) {
-            playerMoney = playerMoney - bet;
-            setPlayerMoney(playerMoney);
-            bet = Math.round(bet);
-            showAlert("alert-danger", "All out of chances. You lost $" + bet, iteration);
-        }
-    } else if (replaceAttempts === 5 && topHand === 0 && compareCards[0] === winningCard) {
-        {
-            if (activeRound === 2) {
-                showAlert("alert-success", "You just barely won $" + bet, iteration);
             }
         }
     }
