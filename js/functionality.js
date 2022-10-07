@@ -298,7 +298,7 @@ function evaluateHand(iteration) {
         });
         if (getOccurrence(compareCards, winningCard) > 1) {
             if (replaceAttempts === 5 && compareCards[0] === winningCard) {
-                showAlert("alert-danger", "It's a draw so far. Place your bet.");
+                showAlert("alert-danger", "It's a draw. Place your bet.");
                 return false;
             }
             if (replaceAttempts !== 5 && compareCards[0] === winningCard) {
