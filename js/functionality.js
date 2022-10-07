@@ -302,15 +302,23 @@ function evaluateHand(iteration) {
                 return false;
             }
         }
-        if (replaceAttempts === 5 && compareCards[0] !== winningCard && topHand !== 0) {
+        console.log("replaceAttempts: " + replaceAttempts + " compareCards[0]: " + compareCards[0] + " !== winningCard: " + winningCard + " - topHand: " + topHand);
+        //replaceAttempts: 5 compareCards[0]: 1 !== winningCard: 5 - topHand: 0
+        if (replaceAttempts === 5 && compareCards[0] !== winningCard) {
+            //if (replaceAttempts === 5 && compareCards[0] !== winningCard && topHand !== 0) {
             playerMoney = playerMoney - bet;
             setPlayerMoney(playerMoney);
             bet = Math.round(bet);
+            document.querySelector("[data-player='" + compareCards.indexOf(winningCard) + "']").classList.remove("alert-info");
+            document.querySelector("[data-player='" + compareCards.indexOf(winningCard) + "']").classList.add("alert-success");
             showAlert("alert-danger", "All out of chances. You lost $" + bet, iteration);
             return false;
         }
-        if (replaceAttempts === 5 && topHand === 0 && compareCards[0] === winningCard) {
+        if (replaceAttempts === 5 && compareCards[0] === winningCard) {
+            // if (replaceAttempts === 5 && topHand === 0 && compareCards[0] === winningCard) {
             if (activeRound === 2) {
+                document.querySelector("[data-player='0']").classList.remove("alert-info");
+                document.querySelector("[data-player='0']").classList.add("alert-success");
                 showAlert("alert-success", "You just barely won $" + bet, iteration);
                 return false;
             }
