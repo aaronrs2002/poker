@@ -297,7 +297,11 @@ function evaluateHand(iteration) {
             e.classList.remove("alert-success");
         });
         if (getOccurrence(compareCards, winningCard) > 1) {
-            if (compareCards[0] === winningCard) {
+            if (replaceAttempts === 5 && compareCards[0] === winningCard) {
+                showAlert("alert-danger", "It's a draw so far. Place your bet.");
+                return false;
+            }
+            if (replaceAttempts !== 5 && compareCards[0] === winningCard) {
                 showAlert("alert-danger", "It's a draw so far. Replace some of your cards to get the win.<br/>Each card replacement ups your bet by 1/5th");
                 return false;
             }
