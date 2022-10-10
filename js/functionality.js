@@ -189,8 +189,9 @@ function evaluateHand(iteration) {
     if (results.length > 0) {
         if (bestHandIndex < 4) {
             bestHandIndex = 4;
+            straight = true;
         }
-        straight = true;
+
     }
     let valueArr = [two, three, four, five, six, seven, eight, nine, ten, jack, queen, king, ace]; /*Determine matching values*/
     let pairQty = 0;
