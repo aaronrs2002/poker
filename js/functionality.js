@@ -303,6 +303,7 @@ function evaluateHand(iteration) {
                 return false;
             }
             if (replaceAttempts !== 5 && compareCards[0] === winningCard) {
+                document.getElementById("foldBt").classList.remove("hide");
                 showAlert("alert-danger", "It's a draw so far. Replace some of your cards to get the win.<br/>Each card replacement ups your bet by 1/5th");
                 return false;
             }
