@@ -55,7 +55,10 @@ function enablePlayBts() {
     });
 }
 function showAlert(status, message, player) {
-    document.getElementById("foldBt").classList.add("hide");
+    if (message.indexOf("It's a draw so far. Replace") === -1) {
+        document.getElementById("foldBt").classList.add("hide");
+    }
+
     if (replaceAttempts === 5 || document.querySelector(".alert-success[data-player='0']") !== null) {
         enablePlayBts();
     }
