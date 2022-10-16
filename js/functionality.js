@@ -87,6 +87,8 @@ function showAlert(status, message, player) {
 
 }
 
+let testResults = [];
+
 function evaluateHand(iteration) {
     countingIterations = iteration;
     if (replaceAttempts === 0) {/*trying to fix a bug that keeps these hiiden*/
@@ -120,7 +122,11 @@ function evaluateHand(iteration) {
     let king = 0;
     let ace = 0;
     for (let i = 0; i < cardsArr.length; i++) {
-        cardIndexes.push(cardHeirarchy.indexOf(cardsArr[i].value))
+        cardIndexes.push(cardHeirarchy.indexOf(cardsArr[i].value));
+        if (cardsArr[i].value === "ace") {
+            cardIndexes.push(-1);/*aces need representation for a straight ace to 4 concept. -1 will work because 2 is represented as 0. this is just used for determining a straight*/
+        }
+
         if (cardsArr[i].value === "two") {
             two = two + 1;
         }
@@ -180,15 +186,19 @@ function evaluateHand(iteration) {
         }
     }
     cardIndexes = cardIndexes.sort(((a, b) => a - b));
+    console.log("cardIndexes: " + cardIndexes);
     var results = [];
     for (var i = 0; i < cardIndexes.length; i++) {    /*DETERMINE A STRIGHT*/
         if (cardIndexes[i + 1] == cardIndexes[i] + 1 && cardIndexes[i + 2] == cardIndexes[i] + 2 && cardIndexes[i + 3] == cardIndexes[i] + 3 && cardIndexes[i + 4] == cardIndexes[i] + 4) {
             results.push(i);
+            testResults.push(i);
+            console.log("testResults: " + testResults);
             compareCards[iteration] = i;
             while (cardIndexes[i] + 1 == cardIndexes[i + 1])
                 i++;
         }
     }
+
     if (results.length > 0) {
         if (bestHandIndex < 4) {
             bestHandIndex = 4;
