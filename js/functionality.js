@@ -2,19 +2,6 @@ localStorage.setItem("completeCards", JSON.stringify(cards));
 const handHeirarchy = ["high-card", "pair", "two-pairs", "three-of-a-kind", "straight", "flush", "full-house", "four-of-a-kind", "straight-flush", "royal-flush"];
 const cardHeirarchy = ["two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "jack", "queen", "king", "ace"];
 const suitArr = ["diamonds", "hearts", "clubs", "spades"];
-let numberOfOpponents = document.getElementById("howManyopponents").value;
-
-if (localStorage.getItem("numberOfOpponents")) {
-    numberOfPlayers = localStorage.getItem("numberOfOpponents");
-    document.getElementById("howManyopponents").value = localStorage.getItem("numberOfOpponents");
-
-}
-function setOpponentNumber() {
-    numberOfOpponents = document.getElementById("howManyopponents").value;
-    localStorage.setItem("numberOfOpponents", document.getElementById("howManyopponents").value);
-}
-
-
 let usedCardsArr = [];
 let player0Obj;
 let player1Obj;
@@ -28,10 +15,7 @@ let replaceAttempts = 0;
 let playerCardsInvolved = "";
 let playerHighCard = "";
 let topHand;
-
-
 let countingIterations = 0;
-
 
 /*DOES NOT RESET AT DEAL*/
 let betPaid = false;
@@ -44,7 +28,6 @@ let bet = 0;
 function setPlayerMoney(passPlayerMoney) {
     playerMoney = passPlayerMoney;
     playerMoney = Math.round(playerMoney);
-
     document.getElementById("playerMoney").innerHTML = passPlayerMoney;
     document.querySelector("#playerMoney").innerHTML = passPlayerMoney;/*SAFARI BUG NEEDS BOTH*/
     localStorage.setItem("balance", passPlayerMoney);
@@ -58,7 +41,6 @@ function showAlert(status, message, player) {
     if (message.indexOf("It's a draw so far. Replace") === -1) {
         document.getElementById("foldBt").classList.add("hide");
     }
-
     if (replaceAttempts === 5 || document.querySelector(".alert-success[data-player='0']") !== null) {
         enablePlayBts();
     }
@@ -86,8 +68,6 @@ function showAlert(status, message, player) {
     return false;
 
 }
-
-let testResults = [];
 
 function evaluateHand(iteration) {
     countingIterations = iteration;
@@ -126,7 +106,6 @@ function evaluateHand(iteration) {
         if (cardsArr[i].value === "ace") {
             cardIndexes.push(-1);/*aces need representation for a straight ace to 4 concept. -1 will work because 2 is represented as 0. this is just used for determining a straight*/
         }
-
         if (cardsArr[i].value === "two") {
             two = two + 1;
         }
@@ -186,19 +165,15 @@ function evaluateHand(iteration) {
         }
     }
     cardIndexes = cardIndexes.sort(((a, b) => a - b));
-    console.log("cardIndexes: " + cardIndexes);
     var results = [];
     for (var i = 0; i < cardIndexes.length; i++) {    /*DETERMINE A STRIGHT*/
         if (cardIndexes[i + 1] == cardIndexes[i] + 1 && cardIndexes[i + 2] == cardIndexes[i] + 2 && cardIndexes[i + 3] == cardIndexes[i] + 3 && cardIndexes[i + 4] == cardIndexes[i] + 4) {
             results.push(i);
-            testResults.push(i);
-            console.log("testResults: " + testResults);
             compareCards[iteration] = i;
             while (cardIndexes[i] + 1 == cardIndexes[i + 1])
                 i++;
         }
     }
-
     if (results.length > 0) {
         if (bestHandIndex < 4) {
             bestHandIndex = 4;
@@ -235,7 +210,6 @@ function evaluateHand(iteration) {
             cardsInvolved = cardsInvolved + " - " + cardHeirarchy[valueArr.lastIndexOf(4)] + "s";
         }
     }
-
     if (valueArr.indexOf(2) !== -1) {
         compareCards[iteration] = valueArr.lastIndexOf(2);
     }
@@ -321,10 +295,7 @@ function evaluateHand(iteration) {
                 return false;
             }
         }
-        console.log("replaceAttempts: " + replaceAttempts + " compareCards[0]: " + compareCards[0] + " !== winningCard: " + winningCard + " - topHand: " + topHand);
-        //replaceAttempts: 5 compareCards[0]: 1 !== winningCard: 5 - topHand: 0
         if (replaceAttempts === 5 && compareCards[0] !== winningCard) {
-            //if (replaceAttempts === 5 && compareCards[0] !== winningCard && topHand !== 0) {
             playerMoney = playerMoney - bet;
             setPlayerMoney(playerMoney);
             bet = Math.round(bet);
@@ -334,7 +305,6 @@ function evaluateHand(iteration) {
             return false;
         }
         if (replaceAttempts === 5 && compareCards[0] === winningCard) {
-            // if (replaceAttempts === 5 && topHand === 0 && compareCards[0] === winningCard) {
             if (activeRound === 2) {
                 document.querySelector("[data-player='0']").classList.remove("alert-info");
                 document.querySelector("[data-player='0']").classList.add("alert-success");
@@ -350,7 +320,6 @@ function evaluateHand(iteration) {
             document.querySelector("[data-player='" + compareCards.indexOf(winningCard) + "']").classList.remove("alert-info");
             document.querySelector("[data-player='" + compareCards.indexOf(winningCard) + "']").classList.add("alert-success");
             let handToBeat = document.querySelector(".alert-success[data-player]").innerHTML.substring(document.querySelector(".alert-success[data-player]").innerHTML.indexOf(">") + 1, document.querySelector(".alert-success[data-player]").innerHTML.length);
-            // handToBeat = handToBeat.substring(handToBeat.indexOf(`<i class="fas fa-user">` + 1, handToBeat.length));
             if (replaceAttempts !== 5) {
                 showAlert("alert-danger", "You're down. Replace some cards to win.<br/>Hand to beat: " + handToBeat + "<br/>Each card replacement ups your bet by 1/5th", iteration);
                 document.getElementById("foldBt").classList.remove("hide");
@@ -384,7 +353,6 @@ function fold() {
     clear();
     window.location = "#";
 }
-
 
 function generate(activeCards) {
     return Math.floor(Math.random() * activeCards.length);
@@ -437,6 +405,7 @@ function play(playerBet) {
                 value: playersCards[i].substring(0, playersCards[i].indexOf("-"))
             });
         }
+        /*ace - 4 straight example: player1Obj = [{ "suit": "clubs", "value": "two" }, { "suit": "diamonds", "value": "three" }, { "suit": "hearts", "value": "ace" }, { "suit": "diamonds", "value": "five" }, { "suit": "diamonds", "value": "four" }];*/
         if (iteration === 0) {
             document.getElementById("playerCards").innerHTML = playerCardsHTML;
             player0Obj = handObj;
@@ -503,6 +472,7 @@ function replace(cardTitle, cardNum) {
     availableCards = tempAvailable;
     evaluateHand(0);
     player0Obj = tempHand;
+
     //window.location.href = "#status";
     if (replaceAttempts !== 5) {
         let currentMessage = document.getElementById("message").innerHTML;
