@@ -427,10 +427,10 @@ function play(playerBet) {
         }
         evaluateHand(iteration);
     }
-    generatePlayer(0);
-    generatePlayer(1);
-    generatePlayer(2);
-    generatePlayer(3);
+
+    for (let i = 0; i < 4; i++) {
+        generatePlayer(i);
+    }
 }
 
 function replace(cardTitle, cardNum) {
