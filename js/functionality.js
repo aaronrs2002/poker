@@ -359,6 +359,17 @@ function generate(activeCards) {
 }
 
 function play(playerBet) {
+    if (playerBet === "any") {
+        playerBet = Number(document.querySelector("[name='anyAmount']").value);
+        document.getElementById("betAny").setAttribute("alt", playerBet);
+        document.querySelector("[name='anyAmount']").value = "";
+    }
+    toggle("");
+
+
+
+
+
     topHand;
     document.getElementById("foldBt").classList.add("hide");
     window.location = "#playerCards";

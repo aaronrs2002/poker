@@ -40,12 +40,23 @@
     <div class="container">
         <div class="row">
             <div class="btn-group form-control mb-2  animated fadeInDown" role="group" alt="Free Poker Games Online">
-                <button type="button" class="btn btn-primary dealAmt" alt="5" onClick="play(Number(5))">$5</button>
+                <button type="button" class="btn btn-primary dealAmt" alt="any" id="betAny"
+                    onClick="toggle('anyAmount')">Any
+                    $</button>
+                <!--<button type="button" class="btn btn-primary dealAmt" alt="5" onClick="play(Number(5))">$5</button>-->
                 <button type="button" class="btn btn-primary dealAmt" alt="10" onClick="play(Number(10))">$10</button>
                 <button type="button" class="btn btn-primary dealAmt" alt="25" onClick="play(Number(25))">$25</button>
                 <button type="button" class="btn btn-primary dealAmt" alt="50" onClick="play(Number(50))">$50</button>
                 <button type="button" class="btn btn-primary dealAmt" alt="100"
                     onClick="play(Number(100))">$100</button>
+            </div>
+            <div class="col-md-12 hide" data-toggle="anyAmount">
+
+                <div class="input-group mb-3">
+                    <input type="number" class="form-control" name="anyAmount"
+                        placeholder="Any Amount. Numerical characters only please." onKeyUp="updateBetAny()">
+                    <button class="btn btn-primary" onClick="play('any')">Bet</button>
+                </div>
             </div>
 
             <div class="col-md-12" alt="play cards">
