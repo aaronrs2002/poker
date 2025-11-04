@@ -31,6 +31,7 @@ function setPlayerMoney(passPlayerMoney) {
     document.getElementById("playerMoney").innerHTML = passPlayerMoney;
     document.querySelector("#playerMoney").innerHTML = passPlayerMoney;/*SAFARI BUG NEEDS BOTH*/
     localStorage.setItem("balance", passPlayerMoney);
+    ckHighScore();
 }
 function enablePlayBts() {
     [].forEach.call(document.querySelectorAll('.dealAmt'), function (e) {
